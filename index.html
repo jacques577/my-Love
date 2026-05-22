@@ -855,6 +855,37 @@
     margin-left: 6px;
   }
 
+
+  /* Two column layout */
+  .two-col-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+    margin-bottom: 2.5rem;
+    align-items: start;
+  }
+  @media (max-width: 560px) {
+    .two-col-section { grid-template-columns: 1fr; }
+  }
+  .two-col-item { min-width: 0; }
+
+  /* Secret hint text */
+  .secret-hint-text {
+    font-size: 11px;
+    color: var(--gold);
+    letter-spacing: 0.5px;
+    margin-bottom: 1rem;
+    opacity: 0.7;
+    font-style: italic;
+  }
+
+  .secret-revealed-inner {
+    background: rgba(139,92,246,0.06);
+    border: 0.5px solid rgba(139,92,246,0.18);
+    border-radius: 16px;
+    padding: 1.5rem 1.25rem;
+  }
+
   /* ===== COUNTDOWN ===== */
   .countdown-card {
     background: linear-gradient(135deg, rgba(196,99,122,0.08), rgba(212,168,83,0.05));
@@ -1331,6 +1362,109 @@
         <span class="prayer-amen">Amen</span>
       </p>
     </div>
+  </div>
+
+  <!-- Worship Songs -->
+  <div class="songs-section">
+    <p class="section-label">✦ Songs for your soul</p>
+    <div class="songs-list">
+      <a class="song-row" href="https://www.youtube.com/results?search_query=Oceans+Hillsong+United" target="_blank">
+        <span class="song-icon">🎵</span>
+        <div class="song-info"><span class="song-title">Oceans (Where Feet May Fail)</span><span class="song-artist">Hillsong United</span></div>
+        <span class="song-arrow">→</span>
+      </a>
+      <a class="song-row" href="https://www.youtube.com/results?search_query=Reckless+Love+Cory+Asbury" target="_blank">
+        <span class="song-icon">🎵</span>
+        <div class="song-info"><span class="song-title">Reckless Love</span><span class="song-artist">Cory Asbury</span></div>
+        <span class="song-arrow">→</span>
+      </a>
+      <a class="song-row" href="https://www.youtube.com/results?search_query=Way+Maker+Sinach" target="_blank">
+        <span class="song-icon">🎵</span>
+        <div class="song-info"><span class="song-title">Way Maker</span><span class="song-artist">Sinach</span></div>
+        <span class="song-arrow">→</span>
+      </a>
+      <a class="song-row" href="https://www.youtube.com/results?search_query=Goodness+of+God+Bethel+Music" target="_blank">
+        <span class="song-icon">🎵</span>
+        <div class="song-info"><span class="song-title">Goodness of God</span><span class="song-artist">Bethel Music</span></div>
+        <span class="song-arrow">→</span>
+      </a>
+      <a class="song-row" href="https://www.youtube.com/results?search_query=What+A+Beautiful+Name+Hillsong+Worship" target="_blank">
+        <span class="song-icon">🎵</span>
+        <div class="song-info"><span class="song-title">What A Beautiful Name</span><span class="song-artist">Hillsong Worship</span></div>
+        <span class="song-arrow">→</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Secret + Journal side by side -->
+  <div class="two-col-section">
+
+    <!-- Secret Note -->
+    <div class="two-col-item">
+      <p class="section-label">✦ Something just for you</p>
+      <div class="secret-lock-card" id="secret-lock-card">
+        <div class="secret-lock-icon">🔐</div>
+        <p class="secret-lock-title">There is a letter locked in here.</p>
+        <p class="secret-lock-sub">Enter your word to open it.</p>
+        <p class="secret-hint-text">Hint: it is what he calls you 🤍</p>
+        <div class="secret-input-wrap">
+          <input class="secret-input" id="secret-input" type="password" placeholder="your word..." maxlength="20" onkeydown="if(event.key==='Enter') trySecret()" />
+          <button class="secret-btn" onclick="trySecret()">Open</button>
+        </div>
+        <p class="secret-wrong" id="secret-wrong">That is not it, my love. Try again.</p>
+      </div>
+      <div class="secret-revealed" id="secret-revealed">
+        <div class="secret-revealed-inner">
+          <p class="secret-revealed-text">
+            I need you to know something I have never said out loud to anyone.<br><br>
+            There was a version of me, not long ago, that had decided love was not for him.
+            Not because I did not want it — but because every time I reached for it,
+            something in me got left behind. I learned to protect myself by feeling less.
+            By staying surface level. By leaving before I could be left.<br><br>
+            Then you came into my life. And you just <em>stayed.</em><br><br>
+            You did not try to fix me. You did not push. You just kept being yourself —
+            warm and real and close to God — and something in me that had been shut
+            for a long time quietly started to open again. I did not even notice it happening.
+            I just woke up one day and realised I was not afraid anymore.<br><br>
+            You did that. Not because you tried to. But because of <em>who you are.</em><br><br>
+            I do not take you for granted.
+            Not the way you laugh. Not the way you love people.
+            Not the way your faith makes you the most grounded person in any room.
+            Not the little things — the socks, the forehead kisses, the doors —
+            those are not habits. Every single one is a choice.
+            A choice I will keep making, every day, as long as you will let me.<br><br>
+            You are not just someone I care about.<br>
+            You are the reason I became someone <em>worth</em> caring about.<br><br>
+            I love you. Completely. On purpose. Without conditions.<br><br>
+            — Always yours
+          </p>
+          <span class="secret-sign">only for her eyes ✦</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Journal / Vault -->
+    <div class="two-col-item">
+      <p class="section-label">✦ Your vault — write to me</p>
+      <div class="journal-card">
+        <div class="journal-header">
+          <p class="journal-title">Write to me.</p>
+          <p class="journal-sub">Anything on your heart. I will not read it until January 9th. Then we open it together. 🤍</p>
+        </div>
+        <div class="journal-entries" id="journal-entries">
+          <p class="journal-empty" id="journal-empty">Your thoughts will live here.</p>
+        </div>
+        <div class="journal-input-area" id="journal-input-area">
+          <textarea class="journal-textarea" id="journal-textarea" placeholder="Write something, even just one word..." rows="3"></textarea>
+          <button class="journal-submit" onclick="saveJournalEntry()">Save it ✦</button>
+          <div style="clear:both"></div>
+        </div>
+        <div class="journal-locked-msg" id="journal-locked-msg">
+          🔒 The vault is sealed. On January 9th, open this together.
+        </div>
+      </div>
+    </div>
+
   </div>
 
 </div>
