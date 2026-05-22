@@ -1207,6 +1207,95 @@
     animation: fadeUp 0.6s 0.5s ease both;
   }
   .day100-btn:hover { background: linear-gradient(135deg, rgba(212,168,83,0.3), rgba(196,99,122,0.2)); }
+
+  /* ===== VAULT DROPDOWN ===== */
+  .vault-toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.85rem 1.75rem;
+    border-top: 0.5px solid rgba(255,255,255,0.05);
+    cursor: pointer;
+    transition: background 0.2s;
+    user-select: none;
+  }
+  .vault-toggle-row:hover { background: rgba(255,255,255,0.02); }
+  .vault-toggle-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .vault-toggle-icon { font-size: 13px; opacity: 0.5; }
+  .vault-toggle-label {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .vault-toggle-count {
+    background: rgba(212,168,83,0.1);
+    border: 0.5px solid rgba(212,168,83,0.2);
+    border-radius: 20px;
+    padding: 2px 8px;
+    font-size: 9px;
+    letter-spacing: 1px;
+    color: var(--gold);
+  }
+  .vault-toggle-chevron {
+    font-size: 10px;
+    color: var(--muted);
+    transition: transform 0.25s ease;
+    opacity: 0.5;
+  }
+  .vault-toggle-chevron.open { transform: rotate(180deg); }
+
+  .vault-list {
+    display: none;
+    border-top: 0.5px solid rgba(255,255,255,0.04);
+  }
+  .vault-list.open { display: block; }
+
+  .vault-list-item {
+    padding: 0.75rem 1.75rem;
+    border-bottom: 0.5px solid rgba(255,255,255,0.03);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .vault-list-item:last-child { border-bottom: none; }
+  .vault-item-date {
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    color: var(--gold);
+    opacity: 0.65;
+    white-space: nowrap;
+    flex-shrink: 0;
+    min-width: 80px;
+  }
+  .vault-item-preview {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.88rem;
+    font-style: italic;
+    color: rgba(245,237,224,0.35);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+  }
+  .vault-item-lock {
+    font-size: 11px;
+    opacity: 0.25;
+    flex-shrink: 0;
+  }
+
+  /* When vault IS open (Jan 9 2027+), show real content */
+  .vault-item-preview.unlocked {
+    color: rgba(245,237,224,0.72);
+    white-space: normal;
+    font-size: 0.92rem;
+    line-height: 1.5;
+  }
+  .vault-item-lock.unlocked { display: none; }
 </style>
 </head>
 <body>
@@ -1454,7 +1543,20 @@
 
     <!-- Journal / Vault -->
     <div class="two-col-item">
-      <p class="section-label">✦ Your vault — write to me</p>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
+        <p class="section-label" style="margin:0">✦ Your vault — write to me</p>
+        <!-- Vault dropdown toggle: always visible -->
+        <div class="vault-toggle-row" id="vault-toggle-row" onclick="toggleVaultList()" style="display:flex;margin:0;padding:5px 10px;border:0.5px solid rgba(255,255,255,0.07);border-radius:20px;background:rgba(255,255,255,0.02);">
+          <div class="vault-toggle-left">
+            <span class="vault-toggle-icon" id="vault-toggle-icon">🔒</span>
+            <span class="vault-toggle-label" id="vault-toggle-label">Vault</span>
+            <span class="vault-toggle-count" id="vault-toggle-count">0</span>
+          </div>
+          <span class="vault-toggle-chevron" id="vault-chevron">▾</span>
+        </div>
+      </div>
+      <!-- Vault dropdown list (appears below the header row) -->
+      <div class="vault-list" id="vault-list" style="margin-bottom:0.5rem;border-radius:12px;overflow:hidden;border:0.5px solid rgba(255,255,255,0.06);background:var(--surface);"></div>
       <div class="journal-card">
         <div class="journal-header">
           <p class="journal-title">Write to me.</p>
@@ -2140,11 +2242,12 @@ function saveJournalEntry() {
   const text = ta.value.trim();
   if (!text) return;
   const entries = loadJournal();
-  const opts = { weekday:'short', month:'short', day:'numeric' };
+  const opts = { weekday:'short', year:'numeric', month:'short', day:'numeric' };
   entries.push({ date: new Date().toLocaleDateString('en-US', opts), text });
   try { localStorage.setItem(JOURNAL_KEY, JSON.stringify(entries)); } catch(e) {}
   ta.value = '';
   renderJournal();
+  renderVaultDropdown();
 }
 
 function renderJournal() {
@@ -2172,6 +2275,62 @@ function renderJournal() {
   });
 }
 renderJournal();
+
+// ==================== VAULT DROPDOWN ====================
+
+const VAULT_OPEN_DATE = new Date('2027-01-09T00:00:00');
+
+function isVaultUnlocked() {
+  return new Date() >= VAULT_OPEN_DATE;
+}
+
+function renderVaultDropdown() {
+  const entries  = loadJournal();
+  const list     = document.getElementById('vault-list');
+  const countEl  = document.getElementById('vault-toggle-count');
+  const labelEl  = document.getElementById('vault-toggle-label');
+  const iconEl   = document.getElementById('vault-toggle-icon');
+
+  countEl.textContent = entries.length;
+
+  const unlocked = isVaultUnlocked();
+  iconEl.textContent  = unlocked ? '📖' : '🔒';
+  labelEl.textContent = unlocked ? 'Open vault' : 'Vault';
+
+  list.innerHTML = '';
+  if (!list.classList.contains('open')) return; // only rebuild when open
+
+  if (!entries.length) {
+    list.innerHTML = `<div style="padding:0.75rem 1.25rem;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:0.9rem;color:var(--muted);text-align:center;">Nothing written yet 🤍</div>`;
+    return;
+  }
+
+  entries.slice().reverse().forEach(e => {
+    const item = document.createElement('div');
+    item.className = 'vault-list-item';
+    if (unlocked) {
+      item.innerHTML = `
+        <span class="vault-item-date">${e.date}</span>
+        <span class="vault-item-preview unlocked">${e.text.replace(/</g,'&lt;')}</span>`;
+    } else {
+      item.innerHTML = `
+        <span class="vault-item-date">${e.date}</span>
+        <span class="vault-item-preview">sealed until January 9th, 2027</span>
+        <span class="vault-item-lock">🔒</span>`;
+    }
+    list.appendChild(item);
+  });
+}
+
+function toggleVaultList() {
+  const list    = document.getElementById('vault-list');
+  const chevron = document.getElementById('vault-chevron');
+  const isOpen  = list.classList.toggle('open');
+  chevron.classList.toggle('open', isOpen);
+  renderVaultDropdown(); // rebuild contents on open
+}
+
+renderVaultDropdown();
 
 // ==================== DAY 100 CELEBRATION ====================
 
