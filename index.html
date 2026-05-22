@@ -2,6 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>100 Reasons I Love You</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400&display=swap" rel="stylesheet">
@@ -1129,19 +1132,20 @@
   .night-banner {
     display: none;
     text-align: center;
-    padding: 1rem;
-    margin-bottom: 1.5rem;
-    background: rgba(139,92,246,0.06);
-    border: 0.5px solid rgba(139,92,246,0.15);
-    border-radius: 14px;
+    padding: 1.1rem 1.5rem;
+    margin-bottom: 1.75rem;
+    background: linear-gradient(135deg, rgba(139,92,246,0.08), rgba(196,99,122,0.06));
+    border: 0.5px solid rgba(139,92,246,0.2);
+    border-radius: 16px;
     animation: fadeUp 0.8s ease both;
   }
   .night-banner.show { display: block; }
   .night-banner-text {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 1.05rem;
+    font-size: 1.1rem;
     font-style: italic;
-    color: rgba(196,180,253,0.7);
+    color: rgba(196,180,253,0.85);
+    line-height: 1.6;
   }
 
   /* ===== DAY 100 CELEBRATION ===== */
@@ -1210,6 +1214,11 @@
 <canvas id="canvas"></canvas>
 
 <div class="app">
+
+  <!-- Night banner -->
+  <div class="night-banner" id="night-banner">
+    <p class="night-banner-text">🌙 You should sleep, my love. But I am glad you came. Sweet dreams. 🤍</p>
+  </div>
 
   <!-- Header -->
   <header class="header">
@@ -2091,10 +2100,13 @@ function checkNightMode() {
     document.body.classList.add('night-mode');
     const banner = document.getElementById('night-banner');
     if (banner) {
+      const msg = hour >= 23 || hour < 3
+        ? '🌙 It is past midnight, my love. You really should sleep. But I am glad you are here. 🤍'
+        : hour < 5
+        ? '🌙 It is so late. Rest now. You deserve it. I will be here in the morning. 🤍'
+        : '🌙 You should sleep, my love. But I am glad you came. Sweet dreams. 🤍';
+      banner.querySelector('.night-banner-text').textContent = msg;
       banner.classList.add('show');
-      // Move banner to top of app
-      const app = document.querySelector('.app');
-      if (app) app.insertBefore(banner, app.firstChild);
     }
   }
 }
