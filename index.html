@@ -854,6 +854,324 @@
     color: var(--gold);
     margin-left: 6px;
   }
+
+  /* ===== COUNTDOWN ===== */
+  .countdown-card {
+    background: linear-gradient(135deg, rgba(196,99,122,0.08), rgba(212,168,83,0.05));
+    border: 0.5px solid rgba(196,99,122,0.2);
+    border-radius: 20px;
+    padding: 1.5rem 1.75rem;
+    margin-bottom: 2rem;
+    text-align: center;
+    animation: fadeUp 1s 0.18s ease both;
+  }
+  .countdown-eyebrow {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--rose);
+    opacity: 0.7;
+    margin-bottom: 0.75rem;
+  }
+  .countdown-numbers {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+  .cd-unit { text-align: center; }
+  .cd-val {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.4rem;
+    font-weight: 300;
+    color: var(--rose-light);
+    line-height: 1;
+    display: block;
+  }
+  .cd-label {
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 3px;
+    display: block;
+  }
+  .countdown-hint {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.95rem;
+    font-style: italic;
+    color: rgba(245,237,224,0.35);
+    letter-spacing: 0.5px;
+  }
+
+  /* ===== WORSHIP SONGS ===== */
+  .songs-section { margin-bottom: 2.5rem; animation: fadeUp 1s 0.5s ease both; }
+  .songs-list { display: flex; flex-direction: column; gap: 10px; }
+  .song-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: var(--surface);
+    border: 0.5px solid rgba(255,255,255,0.06);
+    border-radius: 14px;
+    padding: 0.9rem 1.25rem;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.25s ease;
+  }
+  .song-row:hover { border-color: rgba(212,168,83,0.25); background: var(--surface2); }
+  .song-icon { font-size: 1.3rem; flex-shrink: 0; }
+  .song-info { flex: 1; }
+  .song-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    color: var(--cream);
+    display: block;
+    margin-bottom: 2px;
+  }
+  .song-artist { font-size: 11px; color: var(--muted); letter-spacing: 0.5px; }
+  .song-arrow { font-size: 14px; color: var(--muted); }
+
+  /* ===== SECRET NOTE ===== */
+  .secret-section { margin-bottom: 2.5rem; animation: fadeUp 1s 0.55s ease both; }
+  .secret-lock-card {
+    background: rgba(139,92,246,0.05);
+    border: 0.5px solid rgba(139,92,246,0.18);
+    border-radius: 20px;
+    padding: 2rem;
+    text-align: center;
+  }
+  .secret-lock-icon { font-size: 2rem; margin-bottom: 0.75rem; opacity: 0.5; }
+  .secret-lock-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem;
+    font-style: italic;
+    color: var(--rare-light);
+    margin-bottom: 0.5rem;
+  }
+  .secret-lock-sub { font-size: 12px; color: var(--muted); letter-spacing: 1px; margin-bottom: 1.25rem; }
+  .secret-input-wrap { display: flex; gap: 8px; justify-content: center; }
+  .secret-input {
+    background: rgba(255,255,255,0.04);
+    border: 0.5px solid rgba(139,92,246,0.25);
+    border-radius: 10px;
+    padding: 10px 16px;
+    color: var(--cream);
+    font-family: 'Jost', sans-serif;
+    font-size: 14px;
+    letter-spacing: 2px;
+    outline: none;
+    width: 140px;
+    text-align: center;
+  }
+  .secret-input::placeholder { color: var(--muted); letter-spacing: 1px; }
+  .secret-btn {
+    background: rgba(139,92,246,0.1);
+    border: 0.5px solid rgba(139,92,246,0.3);
+    border-radius: 10px;
+    padding: 10px 18px;
+    color: var(--rare-light);
+    font-family: 'Jost', sans-serif;
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .secret-btn:hover { background: rgba(139,92,246,0.2); }
+  .secret-wrong { font-size: 12px; color: var(--rose); margin-top: 0.5rem; opacity: 0; transition: opacity 0.3s; }
+  .secret-wrong.show { opacity: 1; }
+  .secret-revealed {
+    display: none;
+    text-align: left;
+  }
+  .secret-revealed.open { display: block; }
+  .secret-revealed-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.1rem, 3.5vw, 1.35rem);
+    font-weight: 300;
+    line-height: 1.85;
+    color: rgba(245,237,224,0.88);
+    font-style: italic;
+  }
+  .secret-revealed-text em { color: var(--rare-light); font-style: normal; }
+  .secret-sign {
+    display: block;
+    margin-top: 1.5rem;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--rare-light);
+    opacity: 0.5;
+    text-align: right;
+  }
+
+  /* ===== JOURNAL ===== */
+  .journal-section { margin-bottom: 2.5rem; animation: fadeUp 1s 0.6s ease both; }
+  .journal-card {
+    background: var(--surface);
+    border: 0.5px solid rgba(255,255,255,0.07);
+    border-radius: 20px;
+    overflow: hidden;
+  }
+  .journal-header {
+    padding: 1.5rem 1.75rem 1rem;
+    border-bottom: 0.5px solid rgba(255,255,255,0.05);
+  }
+  .journal-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem;
+    color: var(--cream);
+    margin-bottom: 4px;
+  }
+  .journal-sub { font-size: 11px; color: var(--muted); letter-spacing: 0.5px; line-height: 1.5; }
+  .journal-entries { padding: 1rem 1.75rem; max-height: 260px; overflow-y: auto; }
+  .journal-entry {
+    padding: 0.9rem 0;
+    border-bottom: 0.5px solid rgba(255,255,255,0.04);
+  }
+  .journal-entry:last-child { border-bottom: none; }
+  .journal-entry-date { font-size: 10px; color: var(--muted); letter-spacing: 1px; margin-bottom: 5px; }
+  .journal-entry-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    color: rgba(245,237,224,0.75);
+    line-height: 1.5;
+    font-style: italic;
+  }
+  .journal-empty {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    font-style: italic;
+    color: var(--muted);
+    text-align: center;
+    padding: 1.5rem 0;
+  }
+  .journal-input-area { padding: 1rem 1.75rem 1.5rem; border-top: 0.5px solid rgba(255,255,255,0.05); }
+  .journal-textarea {
+    width: 100%;
+    background: rgba(255,255,255,0.03);
+    border: 0.5px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 12px 14px;
+    color: var(--cream);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    font-style: italic;
+    line-height: 1.6;
+    resize: none;
+    outline: none;
+    min-height: 80px;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+  }
+  .journal-textarea::placeholder { color: var(--muted); }
+  .journal-textarea:focus { border-color: rgba(196,99,122,0.3); }
+  .journal-submit {
+    margin-top: 8px;
+    background: rgba(196,99,122,0.1);
+    border: 0.5px solid rgba(196,99,122,0.25);
+    border-radius: 10px;
+    padding: 9px 20px;
+    color: var(--rose-light);
+    font-family: 'Jost', sans-serif;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    float: right;
+  }
+  .journal-submit:hover { background: rgba(196,99,122,0.2); }
+  .journal-locked-msg {
+    padding: 1.5rem 1.75rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    font-style: italic;
+    color: var(--muted);
+    text-align: center;
+    display: none;
+  }
+
+  /* ===== GOOD NIGHT MODE ===== */
+  body.night-mode { --bg: #07060a; --surface: #0f0d14; --surface2: #141019; }
+  .night-banner {
+    display: none;
+    text-align: center;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    background: rgba(139,92,246,0.06);
+    border: 0.5px solid rgba(139,92,246,0.15);
+    border-radius: 14px;
+    animation: fadeUp 0.8s ease both;
+  }
+  .night-banner.show { display: block; }
+  .night-banner-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    font-style: italic;
+    color: rgba(196,180,253,0.7);
+  }
+
+  /* ===== DAY 100 CELEBRATION ===== */
+  .confetti-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 200;
+    display: none;
+  }
+  .day100-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(10,8,15,0.97);
+    z-index: 150;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2rem;
+    backdrop-filter: blur(10px);
+  }
+  .day100-overlay.open { display: flex; }
+  .day100-crown { font-size: 3.5rem; margin-bottom: 1rem; animation: pop 0.6s cubic-bezier(0.34,1.56,0.64,1) both; }
+  .day100-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2rem, 6vw, 3rem);
+    font-weight: 300;
+    color: var(--gold-light);
+    line-height: 1.2;
+    margin-bottom: 1rem;
+    animation: fadeUp 0.6s 0.2s ease both;
+  }
+  .day100-message {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.1rem, 3.5vw, 1.5rem);
+    font-style: italic;
+    color: var(--cream);
+    line-height: 1.7;
+    max-width: 480px;
+    margin-bottom: 2rem;
+    animation: fadeUp 0.6s 0.35s ease both;
+  }
+  .day100-message em { color: var(--rose-light); font-style: normal; }
+  .day100-btn {
+    background: linear-gradient(135deg, rgba(212,168,83,0.2), rgba(196,99,122,0.15));
+    border: 0.5px solid rgba(212,168,83,0.4);
+    border-radius: 14px;
+    padding: 14px 32px;
+    color: var(--gold-light);
+    font-family: 'Jost', sans-serif;
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    animation: fadeUp 0.6s 0.5s ease both;
+  }
+  .day100-btn:hover { background: linear-gradient(135deg, rgba(212,168,83,0.3), rgba(196,99,122,0.2)); }
 </style>
 </head>
 <body>
@@ -914,6 +1232,18 @@
       </div>
     </div>
     <div class="streak-message" id="streak-message">Open today's reason to start your streak 🤍</div>
+  </div>
+
+
+  <!-- Countdown to Jan 9 -->
+  <div class="countdown-card" id="countdown-card">
+    <p class="countdown-eyebrow">✦ something special is coming</p>
+    <div class="countdown-numbers">
+      <div class="cd-unit"><span class="cd-val" id="cd-days">--</span><span class="cd-label">days</span></div>
+      <div class="cd-unit"><span class="cd-val" id="cd-hours">--</span><span class="cd-label">hours</span></div>
+      <div class="cd-unit"><span class="cd-val" id="cd-mins">--</span><span class="cd-label">minutes</span></div>
+    </div>
+    <p class="countdown-hint">January 9th holds a question only you can answer.</p>
   </div>
 
   <!-- Stats -->
@@ -1596,6 +1926,169 @@ function renderGrid(stateOverride) {
 })();
 
 // ==================== INIT ====================
+
+// ==================== COUNTDOWN ====================
+
+function updateCountdown() {
+  const target = new Date('2026-01-09T00:00:00');
+  const now = new Date();
+  const diff = target - now;
+  if (diff <= 0) {
+    document.getElementById('cd-days').textContent = '0';
+    document.getElementById('cd-hours').textContent = '0';
+    document.getElementById('cd-mins').textContent = '0';
+    return;
+  }
+  const days = Math.floor(diff / (1000*60*60*24));
+  const hours = Math.floor((diff % (1000*60*60*24)) / (1000*60*60));
+  const mins = Math.floor((diff % (1000*60*60)) / (1000*60));
+  document.getElementById('cd-days').textContent = days;
+  document.getElementById('cd-hours').textContent = hours;
+  document.getElementById('cd-mins').textContent = String(mins).padStart(2,'0');
+}
+updateCountdown();
+setInterval(updateCountdown, 30000);
+
+// ==================== NIGHT MODE ====================
+
+function checkNightMode() {
+  const hour = new Date().getHours();
+  if (hour >= 20 || hour < 5) {
+    document.body.classList.add('night-mode');
+    const banner = document.getElementById('night-banner');
+    if (banner) {
+      banner.classList.add('show');
+      // Move banner to top of app
+      const app = document.querySelector('.app');
+      if (app) app.insertBefore(banner, app.firstChild);
+    }
+  }
+}
+checkNightMode();
+
+// ==================== SECRET NOTE ====================
+
+function trySecret() {
+  const val = document.getElementById('secret-input').value.trim().toLowerCase();
+  const wrongEl = document.getElementById('secret-wrong');
+  if (val === 'yoh') {
+    document.getElementById('secret-lock-card').style.display = 'none';
+    document.getElementById('secret-revealed').classList.add('open');
+  } else {
+    wrongEl.classList.add('show');
+    setTimeout(() => wrongEl.classList.remove('show'), 2500);
+    document.getElementById('secret-input').value = '';
+  }
+}
+
+// ==================== JOURNAL ====================
+
+const JOURNAL_KEY = '100reasons_journal';
+
+function loadJournal() {
+  try { return JSON.parse(localStorage.getItem(JOURNAL_KEY)) || []; } catch(e) { return []; }
+}
+
+function saveJournalEntry() {
+  const ta = document.getElementById('journal-textarea');
+  const text = ta.value.trim();
+  if (!text) return;
+  const entries = loadJournal();
+  const opts = { weekday:'short', month:'short', day:'numeric' };
+  entries.push({ date: new Date().toLocaleDateString('en-US', opts), text });
+  try { localStorage.setItem(JOURNAL_KEY, JSON.stringify(entries)); } catch(e) {}
+  ta.value = '';
+  renderJournal();
+}
+
+function renderJournal() {
+  const entries = loadJournal();
+  const container = document.getElementById('journal-entries');
+  const emptyEl = document.getElementById('journal-empty');
+  const isDay100 = daysDiff('2026-05-22', todayStr()) >= 99;
+
+  if (isDay100) {
+    document.getElementById('journal-input-area').style.display = 'none';
+    document.getElementById('journal-locked-msg').style.display = 'block';
+  }
+
+  if (!entries.length) {
+    if (emptyEl) emptyEl.style.display = 'block';
+    return;
+  }
+  if (emptyEl) emptyEl.style.display = 'none';
+  container.innerHTML = '';
+  entries.slice().reverse().forEach(e => {
+    const div = document.createElement('div');
+    div.className = 'journal-entry';
+    div.innerHTML = `<p class="journal-entry-date">${e.date}</p><p class="journal-entry-text">${e.text.replace(/</g,'&lt;')}</p>`;
+    container.appendChild(div);
+  });
+}
+renderJournal();
+
+// ==================== DAY 100 CELEBRATION ====================
+
+function checkDay100() {
+  const dayIndex = daysDiff('2026-05-22', todayStr());
+  if (dayIndex >= 99) {
+    const seen = localStorage.getItem('day100_seen');
+    if (!seen) {
+      setTimeout(() => {
+        document.getElementById('day100-overlay').classList.add('open');
+        document.getElementById('confetti-canvas').style.display = 'block';
+        launchConfetti();
+        localStorage.setItem('day100_seen', '1');
+      }, 1200);
+    }
+  }
+}
+
+function closeDay100() {
+  document.getElementById('day100-overlay').classList.remove('open');
+  document.getElementById('confetti-canvas').style.display = 'none';
+}
+
+function launchConfetti() {
+  const canvas = document.getElementById('confetti-canvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  const pieces = Array.from({length: 120}, () => ({
+    x: Math.random() * canvas.width,
+    y: Math.random() * -canvas.height,
+    w: Math.random() * 10 + 5,
+    h: Math.random() * 6 + 3,
+    color: ['#d4a853','#c4637a','#f0c878','#e891a8','#c4b5fd'][Math.floor(Math.random()*5)],
+    speed: Math.random() * 3 + 1.5,
+    angle: Math.random() * 360,
+    spin: (Math.random() - 0.5) * 4,
+    drift: (Math.random() - 0.5) * 1.5,
+  }));
+  let frame = 0;
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    pieces.forEach(p => {
+      p.y += p.speed;
+      p.x += p.drift;
+      p.angle += p.spin;
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.angle * Math.PI / 180);
+      ctx.fillStyle = p.color;
+      ctx.globalAlpha = 0.85;
+      ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+      ctx.restore();
+    });
+    frame++;
+    if (frame < 300) requestAnimationFrame(draw);
+    else { ctx.clearRect(0,0,canvas.width,canvas.height); }
+  }
+  draw();
+}
+
+checkDay100();
+
 
 renderAll();
 </script>
