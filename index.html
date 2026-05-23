@@ -953,7 +953,56 @@
     text-decoration: none;
     transition: all 0.25s ease;
   }
-  .song-row:hover { border-color: rgba(212,168,83,0.25); background: var(--surface2); }
+  .song-row { cursor: pointer; }
+  .song-player {
+    background: var(--surface);
+    border: 0.5px solid rgba(212,168,83,0.2);
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+    animation: fadeUp 0.4s ease both;
+  }
+  .song-player-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0.75rem 1.25rem;
+    border-bottom: 0.5px solid rgba(255,255,255,0.05);
+  }
+  .song-player-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--gold);
+    animation: pulse 1s ease infinite;
+    flex-shrink: 0;
+  }
+  .song-player-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    font-style: italic;
+    color: var(--cream);
+    flex: 1;
+  }
+  .song-player-close {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 13px;
+    cursor: pointer;
+    padding: 4px 6px;
+    line-height: 1;
+    transition: color 0.2s;
+  }
+  .song-player-close:hover { color: var(--cream); }
+  .song-player-frame {
+    width: 100%;
+    height: 220px;
+    background: #000;
+  }
+  .song-row.playing .song-arrow { color: var(--gold); }
+  .song-row.playing { border-color: rgba(212,168,83,0.25); background: var(--surface2); }
+
+  /* songs section already has margin, just keep */
   .song-icon { font-size: 1.3rem; flex-shrink: 0; }
   .song-info { flex: 1; }
   .song-title {
@@ -1059,7 +1108,7 @@
     margin-bottom: 4px;
   }
   .journal-sub { font-size: 11px; color: var(--muted); letter-spacing: 0.5px; line-height: 1.5; }
-  .journal-entries { padding: 1rem 1.75rem; max-height: 260px; overflow-y: auto; }
+  .journal-entries { padding: 1rem 1.75rem; max-height: 260px; overflow-y: auto; display: none; }
   .journal-entry {
     padding: 0.9rem 0;
     border-bottom: 0.5px solid rgba(255,255,255,0.04);
@@ -1434,63 +1483,83 @@
   <!-- Prayer -->
   <div class="prayer-section">
     <p class="section-label">✦ A prayer for us</p>
-    <div class="prayer-card">
-      <p class="prayer-eyebrow">From my heart to God</p>
-      <p class="prayer-text">
-        Lord, thank You for <em>My Love</em>.<br>
-        For her soft heart, her care for others,<br>
-        her faith that shines through everything she does.<br><br>
-        Thank You for using her to pull me<br>
-        out of a season I couldn't find my way through alone.<br>
-        Thank You for making her <em>loyal</em> and steady<br>
-        and full of a love that noticed the little things.<br><br>
-        I pray You protect her completely —<br>
-        her heart, her peace, her path.<br>
-        I pray she always feels <em>seen, chosen,</em> and safe.<br>
-        That she knows she is worth every slow, gentle moment.<br><br>
-        Make me the man she deserves.<br>
-        Rooted in You. Soft for her.<br>
-        Constant in the small things that make her feel loved.<br><br>
-        Thank You for our picnic, for our laughs,<br>
-        for every forehead kiss and every door I got to open.<br>
-        Let there be <em>thousands more.</em><br><br>
-        Cover us in Your grace<br>
-        all the way to January 9th —<br>
-        and every day after that.
-        <span class="prayer-amen">Amen</span>
-      </p>
+    <div class="today-card" style="cursor:default;" onmouseenter="" onmouseleave="">
+      <div class="card-accent" style="background: linear-gradient(90deg, var(--rare), var(--rare-light), var(--gold));"></div>
+      <div class="card-inner">
+        <div class="card-number" style="color:var(--rare-light);">
+          From my heart to God
+        </div>
+        <div class="card-reason" id="prayer-body">
+          Lord, thank You for <em>My Love</em>.<br>
+          For her soft heart, her care for others,<br>
+          her faith that shines through everything she does.<br><br>
+          Thank You for using her to pull me<br>
+          out of a season I couldn't find my way through alone.<br>
+          Thank You for making her <em>loyal</em> and steady<br>
+          and full of a love that noticed the little things.<br><br>
+          I pray You protect her completely —<br>
+          her heart, her peace, her path.<br>
+          I pray she always feels <em>seen, chosen,</em> and safe.<br>
+          That she knows she is worth every slow, gentle moment.<br><br>
+          Make me the man she deserves.<br>
+          Rooted in You. Soft for her.<br>
+          Constant in the small things that make her feel loved.<br><br>
+          Thank You for our picnic, for our laughs,<br>
+          for every forehead kiss and every door I got to open.<br>
+          Let there be <em>thousands more.</em><br><br>
+          Cover us in Your grace<br>
+          all the way to January 9th —<br>
+          and every day after that.
+        </div>
+        <div class="card-footer">
+          <span class="card-date" style="letter-spacing:3px;text-transform:uppercase;font-size:10px;color:var(--rare-light);opacity:0.5;">Amen</span>
+          <span style="font-size:1.1rem;opacity:0.4;">🙏</span>
+        </div>
+      </div>
     </div>
   </div>
 
   <!-- Worship Songs -->
   <div class="songs-section">
     <p class="section-label">✦ Songs for your soul</p>
+    <!-- Embedded player -->
+    <div class="song-player" id="song-player" style="display:none;">
+      <div class="song-player-info">
+        <span class="song-player-dot" id="song-player-dot"></span>
+        <span class="song-player-name" id="song-player-name"></span>
+        <button class="song-player-close" onclick="closeSongPlayer()">✕</button>
+      </div>
+      <div class="song-player-frame">
+        <iframe id="yt-iframe" width="100%" height="100%" frameborder="0"
+          allow="autoplay; encrypted-media" allowfullscreen></iframe>
+      </div>
+    </div>
     <div class="songs-list">
-      <a class="song-row" href="https://www.youtube.com/results?search_query=Oceans+Hillsong+United" target="_blank">
-        <span class="song-icon">🎵</span>
+      <div class="song-row" onclick="playSong('kQEd5Ky4E9A', 'Oceans (Where Feet May Fail)', 'Hillsong United')">
+        <span class="song-icon" id="song-icon-0">🎵</span>
         <div class="song-info"><span class="song-title">Oceans (Where Feet May Fail)</span><span class="song-artist">Hillsong United</span></div>
-        <span class="song-arrow">→</span>
-      </a>
-      <a class="song-row" href="https://www.youtube.com/results?search_query=Reckless+Love+Cory+Asbury" target="_blank">
-        <span class="song-icon">🎵</span>
+        <span class="song-arrow">▶</span>
+      </div>
+      <div class="song-row" onclick="playSong('Nv6v6SxEArU', 'Reckless Love', 'Cory Asbury')">
+        <span class="song-icon" id="song-icon-1">🎵</span>
         <div class="song-info"><span class="song-title">Reckless Love</span><span class="song-artist">Cory Asbury</span></div>
-        <span class="song-arrow">→</span>
-      </a>
-      <a class="song-row" href="https://www.youtube.com/results?search_query=Way+Maker+Sinach" target="_blank">
-        <span class="song-icon">🎵</span>
+        <span class="song-arrow">▶</span>
+      </div>
+      <div class="song-row" onclick="playSong('0tF0pSorb28', 'Way Maker', 'Sinach')">
+        <span class="song-icon" id="song-icon-2">🎵</span>
         <div class="song-info"><span class="song-title">Way Maker</span><span class="song-artist">Sinach</span></div>
-        <span class="song-arrow">→</span>
-      </a>
-      <a class="song-row" href="https://www.youtube.com/results?search_query=Goodness+of+God+Bethel+Music" target="_blank">
-        <span class="song-icon">🎵</span>
+        <span class="song-arrow">▶</span>
+      </div>
+      <div class="song-row" onclick="playSong('v-N0D-iHPCo', 'Goodness of God', 'Bethel Music')">
+        <span class="song-icon" id="song-icon-3">🎵</span>
         <div class="song-info"><span class="song-title">Goodness of God</span><span class="song-artist">Bethel Music</span></div>
-        <span class="song-arrow">→</span>
-      </a>
-      <a class="song-row" href="https://www.youtube.com/results?search_query=What+A+Beautiful+Name+Hillsong+Worship" target="_blank">
-        <span class="song-icon">🎵</span>
+        <span class="song-arrow">▶</span>
+      </div>
+      <div class="song-row" onclick="playSong('nQWFzMaD-yI', 'What A Beautiful Name', 'Hillsong Worship')">
+        <span class="song-icon" id="song-icon-4">🎵</span>
         <div class="song-info"><span class="song-title">What A Beautiful Name</span><span class="song-artist">Hillsong Worship</span></div>
-        <span class="song-arrow">→</span>
-      </a>
+        <span class="song-arrow">▶</span>
+      </div>
     </div>
   </div>
 
@@ -1701,6 +1770,64 @@ const REASONS = [
 
 // Rare day indices (0-based, days 7, 14, 21, 30, 50, 77, 99)
 const RARE_DAYS = new Set([6, 13, 20, 29, 49, 76, 99]);
+
+// ==================== DAILY PRAYERS ====================
+
+const PRAYERS = [
+  "Lord, thank You for bringing her into my life.\nLet her feel *loved* today in ways she cannot explain.\nProtect her heart. Protect her peace.\nLet her know she is *seen* by You and by me.\nAmen.",
+  "God, cover her today.\nWherever she goes, let *Your presence* go with her.\nMake her path clear, her heart light,\nand remind her that she is *chosen* — by You, and by me.\nAmen.",
+  "Lord, I pray over her mind today.\nQuiet every anxious thought.\nReplace every doubt with *certainty* —\nthat she is loved, she is enough, she is *held*.\nAmen.",
+  "Father, thank You for her *soft heart*.\nFor the way she loves people so fully.\nProtect that tenderness in her.\nLet the world be gentle with someone this *rare*.\nAmen.",
+  "God, make her feel *beautiful* today.\nNot just on the outside — though she is —\nbut in the deep way. The *soul* way.\nThe way only You can make a person feel.\nAmen.",
+  "Lord, thank You for her *faith*.\nFor the way she carries You with her everywhere.\nStrengthen it. Deepen it.\nLet her roots go even further down today.\nAmen.",
+  "Father, I ask You to *rest* her today.\nWherever she is tired — in her body, her mind, her spirit —\nlet her find *stillness* in You.\nShe deserves that peace.\nAmen.",
+  "God, I thank You for her *loyalty*.\nFor the way she stays. For the way she shows up.\nThat is so rare. Honour her for it.\nLet her see the fruit of *being constant*.\nAmen.",
+  "Lord, go before her today.\nIn every conversation, every decision, every room she walks into —\nlet *Your wisdom* be on her lips\nand *Your confidence* in her steps.\nAmen.",
+  "Father, thank You for the way she *loves*.\nShe loves like it costs her nothing,\nbut I know it costs her everything.\nLet that love come *back to her* today, tenfold.\nAmen.",
+  "God, remind her today that she is not *behind*.\nShe is not too late. She is not too much.\nShe is exactly *where You placed her*,\ngrowing exactly the way You planned.\nAmen.",
+  "Lord, protect what is *being built* between us.\nKeep it holy. Keep it *intentional*.\nLet every day draw us closer to the people\nYou need us to be for each other.\nAmen.",
+  "Father, give her *joy* today.\nNot just happiness — *joy*.\nThe kind that doesn't depend on circumstances.\nThe kind only You can give.\nAmen.",
+  "God, I pray over her *relationships* today.\nThe people she loves, the people she gives to.\nLet her be *surrounded by goodness*\nand protected from anything that drains her.\nAmen.",
+  "Lord, thank You for her *consistency*.\nFor who she is when no one is watching.\nFor the quiet, steady *faithfulness* in her.\nLet her know You see it. I see it.\nAmen.",
+  "Father, let her feel *held* today.\nNot alone. Not forgotten.\nHeld by You, thought of by me,\ncovered in *love she can actually feel*.\nAmen.",
+  "God, give her *clarity* today.\nIn the things she is praying about,\nthe decisions she is carrying —\nlet *Your voice* be the loudest one she hears.\nAmen.",
+  "Lord, I thank You for her *strength*.\nThe kind she doesn't even know she has.\nWhen she feels weak today, remind her\nthat *Your power* is made perfect in that place.\nAmen.",
+  "Father, let her *worship* be full today.\nNot just in song — but in the way she lives.\nLet every ordinary moment feel like *an offering*\nbecause she is *Yours*.\nAmen.",
+  "God, thank You for the specific, detailed,\n*deliberate* way You made her.\nNothing about her is accidental.\nHelp her walk in the *fullness* of that today.\nAmen.",
+  "Lord, I pray for her *heart* today.\nEvery part she protects, every part she gives freely —\nguard it all.\nLet her love *without fear* and trust *without walls*.\nAmen.",
+  "Father, thank You for her *smile*.\nFor the way it changes rooms.\nFor the way it changes *me*.\nLet her have a reason to wear it all day today.\nAmen.",
+  "God, go with her into every hard thing she is facing.\nLet her feel *not alone*.\nLet Your presence be so real\nthat *fear doesn't get a seat* at the table.\nAmen.",
+  "Lord, I thank You for the ways she has *grown*.\nFor the version of her standing here today.\nHonour everything it took to become her.\nShe has *earned* every good thing coming.\nAmen.",
+  "Father, protect her *sleep* tonight.\nGive her dreams that are *peaceful*.\nLet her body rest fully.\nAnd let her wake up feeling *loved*.\nAmen.",
+  "God, I pray over her *purpose* today.\nEvery gift You placed in her — *activate it*.\nLet her walk in it boldly,\nknowing she was *made for exactly this*.\nAmen.",
+  "Lord, thank You for her *gentleness*.\nIn a world that calls softness weakness,\nlet her know that her tenderness\nis one of the *bravest* things about her.\nAmen.",
+  "Father, cover her *mind* today.\nEvery thought that tries to steal her peace —\nlet *Your truth* be louder.\nLet her think well of herself,\nbecause *You think well of her*.\nAmen.",
+  "God, I pray she feels *chosen* today.\nNot just by me — but by *You*.\nRooted in the knowledge that\nbefore anyone else loved her, *You did first*.\nAmen.",
+  "Lord, thank You for who she is *becoming*.\nFor the story still being written.\nFor the chapters ahead that are *better*\nthan anything she can currently imagine.\nAmen.",
+  "Father, let today be *light* for her.\nNo unnecessary heaviness.\nNo burdens she wasn't meant to carry.\nJust *You*, and her, and grace.\nAmen.",
+  "God, I thank You for her *voice*.\nFor the way she speaks life into people.\nLet the words she says today\n*land somewhere and grow*.\nAmen.",
+  "Lord, make her *brave* today.\nIn the small things that require courage.\nThe conversations, the steps, the trusting.\nLet her move with *holy confidence*.\nAmen.",
+  "Father, thank You for her *presence*.\nFor the way a room shifts when she walks in.\nShe doesn't know she does it.\nThat's what makes it *beautiful*.\nAmen.",
+  "God, I pray over *January 9th*.\nOver what it holds.\nOver what we are building toward.\nLet it be *everything You intended*.\nAmen.",
+  "Lord, thank You for her *patience*.\nWith people, with process, with *me*.\nHonour that patience.\nLet it come back to her as *peace*.\nAmen.",
+  "Father, let her feel *close to You* today.\nNot far. Not forgotten.\nClose — the way You always are,\nbut sometimes *we forget to notice*.\nAmen.",
+  "God, give her *favour* today.\nLet things open for her.\nLet the right people show up.\nLet *doors open* that she hasn't even knocked on yet.\nAmen.",
+  "Lord, I thank You for the way she *prays*.\nFor the faith underneath it.\nFor the fact that she *believes* You hear her.\nYou do. And so do I.\nAmen.",
+  "Father, cover everything she is *trusting You with*.\nThe private things. The quiet prayers.\nThe things she hasn't said out loud yet.\n*You already know. And You are already moving.*\nAmen.",
+  "God, I pray that she feels *proud of herself* today.\nNot in pride — but in *grace*.\nThe quiet knowing that she is\nexactly *who she was supposed to become*.\nAmen.",
+  "Lord, thank You for the way she *shows up*.\nConsistently. Faithfully. Without fanfare.\nLet that faithfulness be *rewarded*\nin every area of her life.\nAmen.",
+  "Father, protect her from *comparison* today.\nFrom measuring herself against anyone else.\nShe was not made to be anyone but *herself*,\nand herself is *more than enough*.\nAmen.",
+  "God, let her feel *at home* in herself today.\nAt peace in her own skin.\nAt rest in her own story.\n*She belongs here. She belongs to You.*\nAmen.",
+  "Lord, I thank You for the way her faith *steadies* me.\nFor how watching her trust You\nmade me want to *trust You too*.\nShe changed the direction of my life.\nAmen.",
+  "Father, give her *endurance* today.\nIn the things that are taking longer than expected.\nIn the waiting. In the hoping.\nLet her know that *what is coming is worth it*.\nAmen.",
+  "God, I pray over every version of her\nthat was *hurt before she got here*.\nHeal what still needs healing.\nAnd let her experience love the way *she always deserved*.\nAmen.",
+  "Lord, let today be *evidence* for her.\nEvidence that You are good.\nEvidence that she is loved.\nEvidence that *this story has a beautiful ending*.\nAmen.",
+  "Father, thank You.\nFor all of it.\nFor *her*.\nFor the grace that brought two people\nto the same place at the right time.\n*Only You do that.*\nAmen.",
+  "Lord, I don't have many words today.\nJust gratitude.\nThank You for *her*.\nAll of her. Every part.\n*That's the whole prayer.*\nAmen.",
+  "God, as this journey ends and a new one begins —\nbless every step ahead of us.\nLet our love be *rooted in You*,\nsteady through everything,\nand more beautiful *every single day*.\nAmen.",
+];
+
+
 
 // ==================== STATE ====================
 
@@ -2064,11 +2191,30 @@ function renderAll() {
   // Today card
   renderTodayCard(state, dayIndex);
   renderGrid(state);
+  renderPrayer(dayIndex);
 }
 
 function updateNameDisplay(name) {
   const el = document.getElementById('for-name-display');
   el.textContent = name ? `I Love You, ${name}` : 'I Love You, My Love';
+  // Update prayer name too
+  const prayerBody = document.getElementById('prayer-body');
+  if (prayerBody) {
+    const displayName = name || 'My Love';
+    prayerBody.innerHTML = prayerBody.innerHTML.replace(/<em>[^<]*<\/em>/, `<em>${displayName}</em>`);
+  }
+}
+
+function renderPrayer(dayIndex) {
+  const el = document.getElementById('prayer-body');
+  if (!el) return;
+  const idx = Math.max(0, Math.min(dayIndex, PRAYERS.length - 1));
+  const raw = PRAYERS[idx];
+  // Convert *word* to <em>word</em> and newlines to <br>
+  const html = raw
+    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+    .replace(/\n/g, '<br>');
+  el.innerHTML = html;
 }
 
 function renderTodayCard(state, dayIndex) {
@@ -2229,6 +2375,40 @@ function trySecret() {
   }
 }
 
+// ==================== SONG PLAYER ====================
+
+let currentSongIndex = null;
+
+function playSong(videoId, title, artist) {
+  const player = document.getElementById('song-player');
+  const iframe = document.getElementById('yt-iframe');
+  const nameEl = document.getElementById('song-player-name');
+
+  // Unhighlight all rows
+  document.querySelectorAll('.song-row').forEach(r => r.classList.remove('playing'));
+
+  // Find which row was clicked and highlight it
+  const rows = document.querySelectorAll('.song-row');
+  rows.forEach(r => {
+    if (r.getAttribute('onclick') && r.getAttribute('onclick').includes(videoId)) {
+      r.classList.add('playing');
+    }
+  });
+
+  nameEl.textContent = `${title} — ${artist}`;
+  iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`;
+  player.style.display = 'block';
+  player.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function closeSongPlayer() {
+  const player = document.getElementById('song-player');
+  const iframe = document.getElementById('yt-iframe');
+  iframe.src = '';
+  player.style.display = 'none';
+  document.querySelectorAll('.song-row').forEach(r => r.classList.remove('playing'));
+}
+
 // ==================== JOURNAL ====================
 
 const JOURNAL_KEY = '100reasons_journal';
@@ -2295,10 +2475,10 @@ function renderVaultDropdown() {
 
   const unlocked = isVaultUnlocked();
   iconEl.textContent  = unlocked ? '📖' : '🔒';
-  labelEl.textContent = unlocked ? 'Open vault' : 'Vault';
+  labelEl.textContent = unlocked ? 'Open vault' : entries.length === 1 ? '1 message sealed' : `${entries.length} messages sealed`;
 
   list.innerHTML = '';
-  if (!list.classList.contains('open')) return; // only rebuild when open
+  if (!list.classList.contains('open')) return;
 
   if (!entries.length) {
     list.innerHTML = `<div style="padding:0.75rem 1.25rem;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:0.9rem;color:var(--muted);text-align:center;">Nothing written yet 🤍</div>`;
@@ -2315,7 +2495,6 @@ function renderVaultDropdown() {
     } else {
       item.innerHTML = `
         <span class="vault-item-date">${e.date}</span>
-        <span class="vault-item-preview">sealed until January 9th, 2027</span>
         <span class="vault-item-lock">🔒</span>`;
     }
     list.appendChild(item);
