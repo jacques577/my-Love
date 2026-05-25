@@ -1,0 +1,2612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>100 Reasons I Love You</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0c0a0f;
+    --surface: #161220;
+    --surface2: #1e1828;
+    --gold: #d4a853;
+    --gold-light: #f0c878;
+    --rose: #c4637a;
+    --rose-light: #e891a8;
+    --cream: #f5ede0;
+    --muted: #7a6e82;
+    --rare: #8b5cf6;
+    --rare-light: #c4b5fd;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--cream);
+    font-family: 'Jost', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    overflow-x: hidden;
+    cursor: default;
+  }
+
+  #canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .app {
+    position: relative;
+    z-index: 1;
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    padding: 3rem 0 2.5rem;
+    animation: fadeUp 1s ease both;
+  }
+
+  .header-eyebrow {
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1rem;
+    opacity: 0.8;
+  }
+
+  .header h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.4rem, 6vw, 3.6rem);
+    font-weight: 300;
+    font-style: italic;
+    color: var(--cream);
+    line-height: 1.1;
+    margin-bottom: 0.75rem;
+  }
+
+  .header h1 span {
+    color: var(--rose-light);
+    display: block;
+    font-style: normal;
+  }
+
+  .header-sub {
+    font-size: 13px;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+
+  /* Stats bar */
+  .stats-bar {
+    display: flex;
+    gap: 1px;
+    margin-bottom: 2.5rem;
+    background: rgba(255,255,255,0.04);
+    border-radius: 16px;
+    padding: 1.25rem 1.5rem;
+    border: 0.5px solid rgba(255,255,255,0.06);
+    animation: fadeUp 1s 0.15s ease both;
+  }
+
+  .stat {
+    flex: 1;
+    text-align: center;
+  }
+
+  .stat-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem;
+    font-weight: 300;
+    color: var(--gold-light);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .stat-label {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .stat-divider {
+    width: 0.5px;
+    background: rgba(255,255,255,0.07);
+    margin: 0 1rem;
+  }
+
+  /* Streak badge */
+  .streak-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: linear-gradient(135deg, rgba(212,168,83,0.12), rgba(212,168,83,0.06));
+    border: 0.5px solid rgba(212,168,83,0.3);
+    border-radius: 20px;
+    padding: 5px 14px;
+    font-size: 12px;
+    color: var(--gold);
+    letter-spacing: 1px;
+    margin-bottom: 2rem;
+    animation: fadeUp 1s 0.25s ease both;
+  }
+
+  .streak-fire { font-size: 14px; }
+
+  /* Today's card - hero */
+  .today-section {
+    margin-bottom: 3rem;
+    animation: fadeUp 1s 0.3s ease both;
+  }
+
+  .section-label {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 1rem;
+  }
+
+  .today-card {
+    background: var(--surface);
+    border-radius: 20px;
+    border: 0.5px solid rgba(255,255,255,0.08);
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.3s ease, border-color 0.3s ease;
+  }
+
+  .today-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(196, 99, 122, 0.3);
+  }
+
+  .today-card.locked {
+    cursor: not-allowed;
+  }
+
+  .today-card.locked:hover {
+    transform: none;
+    border-color: rgba(255,255,255,0.08);
+  }
+
+  .card-accent {
+    height: 3px;
+    background: linear-gradient(90deg, var(--rose), var(--gold), var(--rose-light));
+  }
+
+  .card-accent.rare-accent {
+    background: linear-gradient(90deg, var(--rare), var(--rare-light), var(--rose-light));
+  }
+
+  .card-inner {
+    padding: 2rem 2rem 1.75rem;
+  }
+
+  .card-number {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--rose);
+    margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .card-number.rare-number { color: var(--rare-light); }
+
+  .rare-badge {
+    background: rgba(139,92,246,0.15);
+    border: 0.5px solid rgba(139,92,246,0.3);
+    border-radius: 6px;
+    padding: 2px 8px;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--rare-light);
+  }
+
+  .card-reason {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.4rem, 4vw, 1.9rem);
+    font-weight: 300;
+    line-height: 1.4;
+    color: var(--cream);
+    margin-bottom: 1.5rem;
+  }
+
+  .card-reason em {
+    color: var(--rose-light);
+    font-style: italic;
+  }
+
+  .card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 1.25rem;
+    border-top: 0.5px solid rgba(255,255,255,0.06);
+  }
+
+  .card-date {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+
+  .heart-btn {
+    background: rgba(196,99,122,0.1);
+    border: 0.5px solid rgba(196,99,122,0.25);
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.2s ease;
+    color: var(--rose-light);
+  }
+
+  .heart-btn:hover, .heart-btn.active {
+    background: rgba(196,99,122,0.2);
+    transform: scale(1.1);
+  }
+
+  .heart-btn.active { color: #ff6b8a; }
+
+  /* Locked card state */
+  .lock-overlay {
+    padding: 2.5rem 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .lock-icon {
+    font-size: 2rem;
+    opacity: 0.3;
+  }
+
+  .lock-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem;
+    font-style: italic;
+    color: var(--muted);
+  }
+
+  .lock-sub {
+    font-size: 12px;
+    color: rgba(122, 110, 130, 0.6);
+    letter-spacing: 1px;
+  }
+
+  /* Grid of past reasons */
+  .grid-section {
+    animation: fadeUp 1s 0.45s ease both;
+  }
+
+  .grid-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.25rem;
+  }
+
+  .reasons-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 10px;
+  }
+
+  .mini-card {
+    background: var(--surface);
+    border-radius: 12px;
+    border: 0.5px solid rgba(255,255,255,0.06);
+    padding: 1rem;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .mini-card:hover {
+    border-color: rgba(196,99,122,0.25);
+    transform: translateY(-1px);
+    background: var(--surface2);
+  }
+
+  .mini-card.rare-card {
+    border-color: rgba(139,92,246,0.2);
+  }
+
+  .mini-card.rare-card:hover {
+    border-color: rgba(139,92,246,0.4);
+  }
+
+  .mini-num {
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--rose);
+    margin-bottom: 6px;
+  }
+
+  .mini-num.rare { color: var(--rare-light); }
+
+  .mini-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13px;
+    line-height: 1.4;
+    color: rgba(245, 237, 224, 0.75);
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .mini-heart {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    font-size: 10px;
+    opacity: 0.5;
+  }
+
+  .mini-locked {
+    background: rgba(255,255,255,0.02);
+    border-color: rgba(255,255,255,0.03);
+    cursor: default;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 80px;
+  }
+
+  .mini-locked:hover {
+    transform: none;
+    background: rgba(255,255,255,0.02);
+    border-color: rgba(255,255,255,0.03);
+  }
+
+  .mini-locked-icon {
+    font-size: 1.2rem;
+    opacity: 0.15;
+  }
+
+  /* Progress bar */
+  .progress-section {
+    margin-bottom: 2.5rem;
+    animation: fadeUp 1s 0.4s ease both;
+  }
+
+  .progress-track {
+    height: 3px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 2px;
+    margin-top: 10px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--rose), var(--gold));
+    border-radius: 2px;
+    transition: width 1s ease;
+  }
+
+  .progress-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 6px;
+  }
+
+  .progress-label {
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* Modal overlay */
+  .modal-bg {
+    position: fixed;
+    inset: 0;
+    background: rgba(10,8,15,0.92);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.35s ease;
+    backdrop-filter: blur(6px);
+  }
+
+  .modal-bg.open {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .modal {
+    background: var(--surface);
+    border-radius: 24px;
+    border: 0.5px solid rgba(255,255,255,0.1);
+    max-width: 480px;
+    width: 100%;
+    overflow: hidden;
+    transform: translateY(20px) scale(0.97);
+    transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
+  }
+
+  .modal-bg.open .modal {
+    transform: translateY(0) scale(1);
+  }
+
+  .modal-accent { height: 4px; background: linear-gradient(90deg, var(--rose), var(--gold), var(--rose-light)); }
+  .modal-accent.rare { background: linear-gradient(90deg, var(--rare), var(--rare-light), var(--rose-light)); }
+
+  .modal-body {
+    padding: 2.5rem 2.5rem 2rem;
+  }
+
+  .modal-eyebrow {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--rose);
+    margin-bottom: 1.25rem;
+  }
+
+  .modal-eyebrow.rare { color: var(--rare-light); }
+
+  .modal-reason {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.6rem, 5vw, 2.2rem);
+    font-weight: 300;
+    line-height: 1.35;
+    color: var(--cream);
+    margin-bottom: 1.5rem;
+  }
+
+  .modal-reason em { color: var(--rose-light); font-style: italic; }
+  .modal-reason.rare-text em { color: var(--rare-light); }
+
+  .modal-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1.25rem;
+    border-top: 0.5px solid rgba(255,255,255,0.07);
+  }
+
+  .modal-close {
+    background: none;
+    border: 0.5px solid rgba(255,255,255,0.12);
+    border-radius: 8px;
+    padding: 8px 18px;
+    color: var(--muted);
+    font-family: 'Jost', sans-serif;
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .modal-close:hover { border-color: rgba(255,255,255,0.25); color: var(--cream); }
+
+  /* Unlock animation */
+  .unlock-anim {
+    text-align: center;
+    padding: 3rem 2.5rem;
+  }
+
+  .unlock-petals {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    animation: pop 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
+  }
+
+  .unlock-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem;
+    font-style: italic;
+    color: var(--gold-light);
+    margin-bottom: 0.5rem;
+    animation: fadeUp 0.5s 0.15s ease both;
+  }
+
+  .unlock-sub {
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    animation: fadeUp 0.5s 0.25s ease both;
+  }
+
+  /* Settings / name edit */
+  .name-section {
+    margin-bottom: 2rem;
+    text-align: center;
+    animation: fadeUp 1s 0.1s ease both;
+  }
+
+  .name-input-wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,255,255,0.03);
+    border: 0.5px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+    padding: 6px 12px;
+    margin-top: 8px;
+  }
+
+  .name-input {
+    background: none;
+    border: none;
+    outline: none;
+    color: var(--rose-light);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    font-style: italic;
+    text-align: center;
+    width: 140px;
+  }
+
+  .name-pencil {
+    font-size: 12px;
+    color: var(--muted);
+    cursor: pointer;
+  }
+
+  /* Animations */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes pop {
+    from { opacity: 0; transform: scale(0.3); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-12px) rotate(5deg); }
+  }
+
+  @keyframes heartBeat {
+    0%, 100% { transform: scale(1); }
+    30% { transform: scale(1.3); }
+    60% { transform: scale(1.1); }
+  }
+
+  @keyframes sparkle {
+    0% { opacity: 0; transform: scale(0) rotate(0deg); }
+    50% { opacity: 1; transform: scale(1) rotate(180deg); }
+    100% { opacity: 0; transform: scale(0) rotate(360deg); }
+  }
+
+  .float-anim { animation: float 4s ease-in-out infinite; }
+  .heartbeat { animation: heartBeat 0.6s ease; }
+
+  /* Tooltip */
+  [data-tip] { position: relative; }
+
+  /* Streak card */
+  .streak-card {
+    background: linear-gradient(135deg, rgba(212,168,83,0.08), rgba(196,99,122,0.06));
+    border: 0.5px solid rgba(212,168,83,0.2);
+    border-radius: 20px;
+    padding: 1.5rem 1.75rem 1.25rem;
+    margin-bottom: 2rem;
+  }
+
+  .streak-top {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .streak-flame-wrap {
+    flex-shrink: 0;
+  }
+
+  .streak-flame {
+    font-size: 2.5rem;
+    display: block;
+    line-height: 1;
+    filter: drop-shadow(0 0 8px rgba(212,168,83,0.3));
+  }
+
+  .streak-flame.cold { filter: none; opacity: 0.3; font-size: 2rem; }
+
+  .streak-info {
+    flex: 1;
+  }
+
+  .streak-number {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3rem;
+    font-weight: 300;
+    color: var(--gold-light);
+    line-height: 1;
+  }
+
+  .streak-label {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .streak-best-wrap {
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  .streak-best-val {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem;
+    color: var(--rose-light);
+    line-height: 1;
+  }
+
+  .streak-best-label {
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .streak-milestones {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 1rem;
+  }
+
+  .milestone {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    background: rgba(255,255,255,0.03);
+    border: 0.5px solid rgba(255,255,255,0.05);
+    border-radius: 10px;
+    padding: 8px 4px;
+    transition: all 0.3s ease;
+    opacity: 0.35;
+  }
+
+  .milestone.reached {
+    opacity: 1;
+    border-color: rgba(212,168,83,0.25);
+    background: rgba(212,168,83,0.06);
+  }
+
+  .ms-icon { font-size: 1.2rem; line-height: 1; }
+
+  .ms-label {
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .milestone.reached .ms-label { color: var(--gold); }
+
+  .streak-message {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.95rem;
+    font-style: italic;
+    color: rgba(245,237,224,0.5);
+    text-align: center;
+    letter-spacing: 0.3px;
+  }
+
+
+  .prayer-section {
+    margin-top: 3.5rem;
+    margin-bottom: 2rem;
+    animation: fadeUp 1s 0.5s ease both;
+  }
+
+  .prayer-card {
+    background: linear-gradient(135deg, rgba(139,92,246,0.08), rgba(212,168,83,0.06));
+    border: 0.5px solid rgba(139,92,246,0.2);
+    border-radius: 20px;
+    padding: 2.5rem 2rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .prayer-card::before {
+    content: '✦';
+    position: absolute;
+    top: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 12px;
+    color: var(--gold);
+    opacity: 0.5;
+    letter-spacing: 8px;
+  }
+
+  .prayer-eyebrow {
+    font-size: 10px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--rare-light);
+    margin-bottom: 1.5rem;
+    margin-top: 0.5rem;
+    opacity: 0.7;
+  }
+
+  .prayer-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.1rem, 3.5vw, 1.4rem);
+    font-weight: 300;
+    font-style: italic;
+    line-height: 1.9;
+    color: rgba(245, 237, 224, 0.85);
+  }
+
+  .prayer-text em {
+    color: var(--gold-light);
+    font-style: normal;
+  }
+
+  .prayer-amen {
+    display: block;
+    margin-top: 1.5rem;
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--gold);
+    opacity: 0.6;
+  }
+
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
+
+  .all-count {
+    font-size: 10px;
+    letter-spacing: 1px;
+    color: var(--muted);
+  }
+
+  .music-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 2rem;
+    animation: fadeUp 1s 0.35s ease both;
+  }
+
+  .music-btn {
+    background: none;
+    border: 0.5px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    padding: 6px 16px;
+    color: var(--muted);
+    font-family: 'Jost', sans-serif;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .music-btn:hover, .music-btn.playing {
+    border-color: rgba(196,99,122,0.3);
+    color: var(--rose-light);
+  }
+
+  .music-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--rose);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .music-btn.playing .music-dot { opacity: 1; animation: pulse 1s ease infinite; }
+
+  @keyframes pulse {
+    0%,100%{transform:scale(1);opacity:1}
+    50%{transform:scale(1.4);opacity:0.6}
+  }
+
+  .day-tag {
+    display: inline-block;
+    background: rgba(212,168,83,0.08);
+    border: 0.5px solid rgba(212,168,83,0.15);
+    border-radius: 6px;
+    padding: 2px 8px;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    color: var(--gold);
+    margin-left: 6px;
+  }
+
+
+  /* Two column layout */
+  .two-col-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+    margin-bottom: 2.5rem;
+    align-items: start;
+  }
+  @media (max-width: 560px) {
+    .two-col-section { grid-template-columns: 1fr; }
+  }
+  .two-col-item { min-width: 0; }
+
+  /* Secret hint text */
+  .secret-hint-text {
+    font-size: 11px;
+    color: var(--gold);
+    letter-spacing: 0.5px;
+    margin-bottom: 1rem;
+    opacity: 0.7;
+    font-style: italic;
+  }
+
+  .secret-revealed-inner {
+    background: rgba(139,92,246,0.06);
+    border: 0.5px solid rgba(139,92,246,0.18);
+    border-radius: 16px;
+    padding: 1.5rem 1.25rem;
+  }
+
+  /* ===== COUNTDOWN ===== */
+  .countdown-card {
+    background: linear-gradient(135deg, rgba(196,99,122,0.08), rgba(212,168,83,0.05));
+    border: 0.5px solid rgba(196,99,122,0.2);
+    border-radius: 20px;
+    padding: 1.5rem 1.75rem;
+    margin-bottom: 2rem;
+    text-align: center;
+    animation: fadeUp 1s 0.18s ease both;
+  }
+  .countdown-eyebrow {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--rose);
+    opacity: 0.7;
+    margin-bottom: 0.75rem;
+  }
+  .countdown-numbers {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+  .cd-unit { text-align: center; }
+  .cd-val {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.4rem;
+    font-weight: 300;
+    color: var(--rose-light);
+    line-height: 1;
+    display: block;
+  }
+  .cd-label {
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 3px;
+    display: block;
+  }
+  .countdown-hint {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.95rem;
+    font-style: italic;
+    color: rgba(245,237,224,0.35);
+    letter-spacing: 0.5px;
+  }
+
+  /* ===== WORSHIP SONGS ===== */
+  .songs-section { margin-bottom: 2.5rem; animation: fadeUp 1s 0.5s ease both; }
+  .songs-list { display: flex; flex-direction: column; gap: 10px; }
+  .song-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: var(--surface);
+    border: 0.5px solid rgba(255,255,255,0.06);
+    border-radius: 14px;
+    padding: 0.9rem 1.25rem;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.25s ease;
+  }
+  .song-row { cursor: pointer; }
+  .song-player {
+    background: var(--surface);
+    border: 0.5px solid rgba(212,168,83,0.2);
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+    animation: fadeUp 0.4s ease both;
+  }
+  .song-player-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0.75rem 1.25rem;
+    border-bottom: 0.5px solid rgba(255,255,255,0.05);
+  }
+  .song-player-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--gold);
+    animation: pulse 1s ease infinite;
+    flex-shrink: 0;
+  }
+  .song-player-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    font-style: italic;
+    color: var(--cream);
+    flex: 1;
+  }
+  .song-player-close {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 13px;
+    cursor: pointer;
+    padding: 4px 6px;
+    line-height: 1;
+    transition: color 0.2s;
+  }
+  .song-player-close:hover { color: var(--cream); }
+  .song-player-frame {
+    width: 100%;
+    height: 220px;
+    background: #000;
+  }
+  .song-row.playing .song-arrow { color: var(--gold); }
+  .song-row.playing { border-color: rgba(212,168,83,0.25); background: var(--surface2); }
+
+  /* songs section already has margin, just keep */
+  .song-icon { font-size: 1.3rem; flex-shrink: 0; }
+  .song-info { flex: 1; }
+  .song-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    color: var(--cream);
+    display: block;
+    margin-bottom: 2px;
+  }
+  .song-artist { font-size: 11px; color: var(--muted); letter-spacing: 0.5px; }
+  .song-arrow { font-size: 14px; color: var(--muted); }
+
+  /* ===== SECRET NOTE ===== */
+  .secret-section { margin-bottom: 2.5rem; animation: fadeUp 1s 0.55s ease both; }
+  .secret-lock-card {
+    background: rgba(139,92,246,0.05);
+    border: 0.5px solid rgba(139,92,246,0.18);
+    border-radius: 20px;
+    padding: 2rem;
+    text-align: center;
+  }
+  .secret-lock-icon { font-size: 2rem; margin-bottom: 0.75rem; opacity: 0.5; }
+  .secret-lock-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem;
+    font-style: italic;
+    color: var(--rare-light);
+    margin-bottom: 0.5rem;
+  }
+  .secret-lock-sub { font-size: 12px; color: var(--muted); letter-spacing: 1px; margin-bottom: 1.25rem; }
+  .secret-input-wrap { display: flex; gap: 8px; justify-content: center; }
+  .secret-input {
+    background: rgba(255,255,255,0.04);
+    border: 0.5px solid rgba(139,92,246,0.25);
+    border-radius: 10px;
+    padding: 10px 16px;
+    color: var(--cream);
+    font-family: 'Jost', sans-serif;
+    font-size: 14px;
+    letter-spacing: 2px;
+    outline: none;
+    width: 140px;
+    text-align: center;
+  }
+  .secret-input::placeholder { color: var(--muted); letter-spacing: 1px; }
+  .secret-btn {
+    background: rgba(139,92,246,0.1);
+    border: 0.5px solid rgba(139,92,246,0.3);
+    border-radius: 10px;
+    padding: 10px 18px;
+    color: var(--rare-light);
+    font-family: 'Jost', sans-serif;
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .secret-btn:hover { background: rgba(139,92,246,0.2); }
+  .secret-wrong { font-size: 12px; color: var(--rose); margin-top: 0.5rem; opacity: 0; transition: opacity 0.3s; }
+  .secret-wrong.show { opacity: 1; }
+  .secret-revealed {
+    display: none;
+    text-align: left;
+  }
+  .secret-revealed.open { display: block; }
+  .secret-revealed-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.1rem, 3.5vw, 1.35rem);
+    font-weight: 300;
+    line-height: 1.85;
+    color: rgba(245,237,224,0.88);
+    font-style: italic;
+  }
+  .secret-revealed-text em { color: var(--rare-light); font-style: normal; }
+  .secret-sign {
+    display: block;
+    margin-top: 1.5rem;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--rare-light);
+    opacity: 0.5;
+    text-align: right;
+  }
+
+  /* ===== JOURNAL ===== */
+  .journal-section { margin-bottom: 2.5rem; animation: fadeUp 1s 0.6s ease both; }
+  .journal-card {
+    background: var(--surface);
+    border: 0.5px solid rgba(255,255,255,0.07);
+    border-radius: 20px;
+    overflow: hidden;
+  }
+  .journal-header {
+    padding: 1.5rem 1.75rem 1rem;
+    border-bottom: 0.5px solid rgba(255,255,255,0.05);
+  }
+  .journal-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem;
+    color: var(--cream);
+    margin-bottom: 4px;
+  }
+  .journal-sub { font-size: 11px; color: var(--muted); letter-spacing: 0.5px; line-height: 1.5; }
+  .journal-entries { padding: 1rem 1.75rem; max-height: 260px; overflow-y: auto; display: none; }
+  .journal-entry {
+    padding: 0.9rem 0;
+    border-bottom: 0.5px solid rgba(255,255,255,0.04);
+  }
+  .journal-entry:last-child { border-bottom: none; }
+  .journal-entry-date { font-size: 10px; color: var(--muted); letter-spacing: 1px; margin-bottom: 5px; }
+  .journal-entry-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    color: rgba(245,237,224,0.75);
+    line-height: 1.5;
+    font-style: italic;
+  }
+  .journal-empty {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    font-style: italic;
+    color: var(--muted);
+    text-align: center;
+    padding: 1.5rem 0;
+  }
+  .journal-input-area { padding: 1rem 1.75rem 1.5rem; border-top: 0.5px solid rgba(255,255,255,0.05); }
+  .journal-textarea {
+    width: 100%;
+    background: rgba(255,255,255,0.03);
+    border: 0.5px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 12px 14px;
+    color: var(--cream);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    font-style: italic;
+    line-height: 1.6;
+    resize: none;
+    outline: none;
+    min-height: 80px;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+  }
+  .journal-textarea::placeholder { color: var(--muted); }
+  .journal-textarea:focus { border-color: rgba(196,99,122,0.3); }
+  .journal-submit {
+    margin-top: 8px;
+    background: rgba(196,99,122,0.1);
+    border: 0.5px solid rgba(196,99,122,0.25);
+    border-radius: 10px;
+    padding: 9px 20px;
+    color: var(--rose-light);
+    font-family: 'Jost', sans-serif;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    float: right;
+  }
+  .journal-submit:hover { background: rgba(196,99,122,0.2); }
+  .journal-locked-msg {
+    padding: 1.5rem 1.75rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    font-style: italic;
+    color: var(--muted);
+    text-align: center;
+    display: none;
+  }
+
+  /* ===== GOOD NIGHT MODE ===== */
+  body.night-mode { --bg: #07060a; --surface: #0f0d14; --surface2: #141019; }
+  .night-banner {
+    display: none;
+    text-align: center;
+    padding: 1.1rem 1.5rem;
+    margin-bottom: 1.75rem;
+    background: linear-gradient(135deg, rgba(139,92,246,0.08), rgba(196,99,122,0.06));
+    border: 0.5px solid rgba(139,92,246,0.2);
+    border-radius: 16px;
+    animation: fadeUp 0.8s ease both;
+  }
+  .night-banner.show { display: block; }
+  .night-banner-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    font-style: italic;
+    color: rgba(196,180,253,0.85);
+    line-height: 1.6;
+  }
+
+  /* ===== DAY 100 CELEBRATION ===== */
+  .confetti-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 200;
+    display: none;
+  }
+  .day100-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(10,8,15,0.97);
+    z-index: 150;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2rem;
+    backdrop-filter: blur(10px);
+  }
+  .day100-overlay.open { display: flex; }
+  .day100-crown { font-size: 3.5rem; margin-bottom: 1rem; animation: pop 0.6s cubic-bezier(0.34,1.56,0.64,1) both; }
+  .day100-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2rem, 6vw, 3rem);
+    font-weight: 300;
+    color: var(--gold-light);
+    line-height: 1.2;
+    margin-bottom: 1rem;
+    animation: fadeUp 0.6s 0.2s ease both;
+  }
+  .day100-message {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.1rem, 3.5vw, 1.5rem);
+    font-style: italic;
+    color: var(--cream);
+    line-height: 1.7;
+    max-width: 480px;
+    margin-bottom: 2rem;
+    animation: fadeUp 0.6s 0.35s ease both;
+  }
+  .day100-message em { color: var(--rose-light); font-style: normal; }
+  .day100-btn {
+    background: linear-gradient(135deg, rgba(212,168,83,0.2), rgba(196,99,122,0.15));
+    border: 0.5px solid rgba(212,168,83,0.4);
+    border-radius: 14px;
+    padding: 14px 32px;
+    color: var(--gold-light);
+    font-family: 'Jost', sans-serif;
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    animation: fadeUp 0.6s 0.5s ease both;
+  }
+  .day100-btn:hover { background: linear-gradient(135deg, rgba(212,168,83,0.3), rgba(196,99,122,0.2)); }
+
+  /* ===== VAULT DROPDOWN ===== */
+  .vault-toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.85rem 1.75rem;
+    border-top: 0.5px solid rgba(255,255,255,0.05);
+    cursor: pointer;
+    transition: background 0.2s;
+    user-select: none;
+  }
+  .vault-toggle-row:hover { background: rgba(255,255,255,0.02); }
+  .vault-toggle-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .vault-toggle-icon { font-size: 13px; opacity: 0.5; }
+  .vault-toggle-label {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .vault-toggle-count {
+    background: rgba(212,168,83,0.1);
+    border: 0.5px solid rgba(212,168,83,0.2);
+    border-radius: 20px;
+    padding: 2px 8px;
+    font-size: 9px;
+    letter-spacing: 1px;
+    color: var(--gold);
+  }
+  .vault-toggle-chevron {
+    font-size: 10px;
+    color: var(--muted);
+    transition: transform 0.25s ease;
+    opacity: 0.5;
+  }
+  .vault-toggle-chevron.open { transform: rotate(180deg); }
+
+  .vault-list {
+    display: none;
+    border-top: 0.5px solid rgba(255,255,255,0.04);
+  }
+  .vault-list.open { display: block; }
+
+  .vault-list-item {
+    padding: 0.75rem 1.75rem;
+    border-bottom: 0.5px solid rgba(255,255,255,0.03);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .vault-list-item:last-child { border-bottom: none; }
+  .vault-item-date {
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    color: var(--gold);
+    opacity: 0.65;
+    white-space: nowrap;
+    flex-shrink: 0;
+    min-width: 80px;
+  }
+  .vault-item-preview {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.88rem;
+    font-style: italic;
+    color: rgba(245,237,224,0.35);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+  }
+  .vault-item-lock {
+    font-size: 11px;
+    opacity: 0.25;
+    flex-shrink: 0;
+  }
+
+  /* When vault IS open (Jan 9 2027+), show real content */
+  .vault-item-preview.unlocked {
+    color: rgba(245,237,224,0.72);
+    white-space: normal;
+    font-size: 0.92rem;
+    line-height: 1.5;
+  }
+  .vault-item-lock.unlocked { display: none; }
+</style>
+</head>
+<body>
+
+<canvas id="canvas"></canvas>
+
+<div class="app">
+
+  <!-- Night banner -->
+  <div class="night-banner" id="night-banner">
+    <p class="night-banner-text">🌙 You should sleep, my love. But I am glad you came. Sweet dreams. 🤍</p>
+  </div>
+
+  <!-- Header -->
+  <header class="header">
+    <p class="header-eyebrow">May 22 → January 9 · 100 reasons, one a day</p>
+    <h1>
+      100 Reasons
+      <span id="for-name-display">I Love You</span>
+    </h1>
+    <p class="header-sub" id="today-date-display"></p>
+  </header>
+
+  <!-- Name input -->
+  <div class="name-section">
+    <div class="name-input-wrap">
+      <input class="name-input" id="name-input" type="text" maxlength="20" placeholder="her name" />
+      <span class="name-pencil">✎</span>
+    </div>
+  </div>
+
+  <!-- Streak Card -->
+  <div class="streak-card" id="streak-card" style="animation: fadeUp 1s 0.2s ease both;">
+    <div class="streak-top">
+      <div class="streak-flame-wrap" id="streak-flame-wrap">
+        <span class="streak-flame" id="streak-flame">🔥</span>
+      </div>
+      <div class="streak-info">
+        <div class="streak-number" id="streak-number">0</div>
+        <div class="streak-label">day streak</div>
+      </div>
+      <div class="streak-best-wrap">
+        <div class="streak-best-val" id="streak-best">0</div>
+        <div class="streak-best-label">best</div>
+      </div>
+    </div>
+    <div class="streak-milestones" id="streak-milestones">
+      <div class="milestone" id="ms-7">
+        <span class="ms-icon">🌸</span>
+        <span class="ms-label">7 days</span>
+      </div>
+      <div class="milestone" id="ms-21">
+        <span class="ms-icon">⭐</span>
+        <span class="ms-label">21 days</span>
+      </div>
+      <div class="milestone" id="ms-50">
+        <span class="ms-icon">💫</span>
+        <span class="ms-label">50 days</span>
+      </div>
+      <div class="milestone" id="ms-100">
+        <span class="ms-icon">👑</span>
+        <span class="ms-label">100 days</span>
+      </div>
+    </div>
+    <div class="streak-message" id="streak-message">Open today's reason to start your streak 🤍</div>
+  </div>
+
+
+  <!-- Countdown to Jan 9 -->
+  <div class="countdown-card" id="countdown-card">
+    <p class="countdown-eyebrow">✦ something special is coming</p>
+    <div class="countdown-numbers">
+      <div class="cd-unit"><span class="cd-val" id="cd-days">--</span><span class="cd-label">days</span></div>
+      <div class="cd-unit"><span class="cd-val" id="cd-hours">--</span><span class="cd-label">hours</span></div>
+      <div class="cd-unit"><span class="cd-val" id="cd-mins">--</span><span class="cd-label">minutes</span></div>
+    </div>
+    <p class="countdown-hint">January 9th holds a question only you can answer.</p>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-bar">
+    <div class="stat">
+      <div class="stat-value" id="stat-unlocked">0</div>
+      <div class="stat-label">Unlocked</div>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat">
+      <div class="stat-value" id="stat-remaining">100</div>
+      <div class="stat-label">Remaining</div>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat">
+      <div class="stat-value" id="stat-rare">0</div>
+      <div class="stat-label">✦ Rare</div>
+    </div>
+  </div>
+
+  <!-- Progress -->
+  <div class="progress-section">
+    <div class="progress-track">
+      <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+    </div>
+    <div class="progress-labels">
+      <span class="progress-label">Day 1</span>
+      <span class="progress-label" id="progress-pct">0% revealed</span>
+      <span class="progress-label">Day 100</span>
+    </div>
+  </div>
+
+  <!-- Today's card -->
+  <div class="today-section">
+    <p class="section-label">✦ Today's reason</p>
+    <div class="today-card" id="today-card" onclick="openTodayCard()">
+      <div class="card-accent" id="today-accent"></div>
+      <div id="today-card-inner"></div>
+    </div>
+  </div>
+
+  <!-- Music mood -->
+  <div class="music-bar">
+    <button class="music-btn" id="music-btn" onclick="toggleMusic()">
+      <span class="music-dot" id="music-dot"></span>
+      <span id="music-label">ambient mood</span>
+    </button>
+  </div>
+
+  <!-- Grid of past reasons -->
+  <div class="grid-section">
+    <div class="grid-header">
+      <p class="section-label" style="margin:0">✦ All reasons</p>
+      <span class="all-count" id="all-count"></span>
+    </div>
+    <div class="reasons-grid" id="reasons-grid"></div>
+  </div>
+
+  <!-- Prayer -->
+  <div class="prayer-section">
+    <p class="section-label">✦ A prayer for us</p>
+    <div class="today-card" style="cursor:default;" onmouseenter="" onmouseleave="">
+      <div class="card-accent" style="background: linear-gradient(90deg, var(--rare), var(--rare-light), var(--gold));"></div>
+      <div class="card-inner">
+        <div class="card-number" style="color:var(--rare-light);">
+          From my heart to God
+        </div>
+        <div class="card-reason" id="prayer-body">
+          Lord, thank You for <em>My Love</em>.<br>
+          For her soft heart, her care for others,<br>
+          her faith that shines through everything she does.<br><br>
+          Thank You for using her to pull me<br>
+          out of a season I couldn't find my way through alone.<br>
+          Thank You for making her <em>loyal</em> and steady<br>
+          and full of a love that noticed the little things.<br><br>
+          I pray You protect her completely —<br>
+          her heart, her peace, her path.<br>
+          I pray she always feels <em>seen, chosen,</em> and safe.<br>
+          That she knows she is worth every slow, gentle moment.<br><br>
+          Make me the man she deserves.<br>
+          Rooted in You. Soft for her.<br>
+          Constant in the small things that make her feel loved.<br><br>
+          Thank You for our picnic, for our laughs,<br>
+          for every forehead kiss and every door I got to open.<br>
+          Let there be <em>thousands more.</em><br><br>
+          Cover us in Your grace<br>
+          all the way to January 9th —<br>
+          and every day after that.
+        </div>
+        <div class="card-footer">
+          <span class="card-date" style="letter-spacing:3px;text-transform:uppercase;font-size:10px;color:var(--rare-light);opacity:0.5;">Amen</span>
+          <span style="font-size:1.1rem;opacity:0.4;">🙏</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Worship Songs -->
+  <div class="songs-section">
+    <p class="section-label">✦ Songs for your soul</p>
+    <!-- Embedded player -->
+    <div class="song-player" id="song-player" style="display:none;">
+      <div class="song-player-info">
+        <span class="song-player-dot" id="song-player-dot"></span>
+        <span class="song-player-name" id="song-player-name"></span>
+        <button class="song-player-close" onclick="closeSongPlayer()">✕</button>
+      </div>
+      <div class="song-player-frame">
+        <iframe id="yt-iframe" width="100%" height="100%" frameborder="0"
+          allow="autoplay; encrypted-media" allowfullscreen></iframe>
+      </div>
+    </div>
+    <div class="songs-list">
+      <div class="song-row" onclick="playSong('kQEd5Ky4E9A', 'Oceans (Where Feet May Fail)', 'Hillsong United')">
+        <span class="song-icon" id="song-icon-0">🎵</span>
+        <div class="song-info"><span class="song-title">Oceans (Where Feet May Fail)</span><span class="song-artist">Hillsong United</span></div>
+        <span class="song-arrow">▶</span>
+      </div>
+      <div class="song-row" onclick="playSong('Nv6v6SxEArU', 'Reckless Love', 'Cory Asbury')">
+        <span class="song-icon" id="song-icon-1">🎵</span>
+        <div class="song-info"><span class="song-title">Reckless Love</span><span class="song-artist">Cory Asbury</span></div>
+        <span class="song-arrow">▶</span>
+      </div>
+      <div class="song-row" onclick="playSong('0tF0pSorb28', 'Way Maker', 'Sinach')">
+        <span class="song-icon" id="song-icon-2">🎵</span>
+        <div class="song-info"><span class="song-title">Way Maker</span><span class="song-artist">Sinach</span></div>
+        <span class="song-arrow">▶</span>
+      </div>
+      <div class="song-row" onclick="playSong('v-N0D-iHPCo', 'Goodness of God', 'Bethel Music')">
+        <span class="song-icon" id="song-icon-3">🎵</span>
+        <div class="song-info"><span class="song-title">Goodness of God</span><span class="song-artist">Bethel Music</span></div>
+        <span class="song-arrow">▶</span>
+      </div>
+      <div class="song-row" onclick="playSong('nQWFzMaD-yI', 'What A Beautiful Name', 'Hillsong Worship')">
+        <span class="song-icon" id="song-icon-4">🎵</span>
+        <div class="song-info"><span class="song-title">What A Beautiful Name</span><span class="song-artist">Hillsong Worship</span></div>
+        <span class="song-arrow">▶</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Secret + Journal side by side -->
+  <div class="two-col-section">
+
+    <!-- Secret Note -->
+    <div class="two-col-item">
+      <p class="section-label">✦ Something just for you</p>
+      <div class="secret-lock-card" id="secret-lock-card">
+        <div class="secret-lock-icon">🔐</div>
+        <p class="secret-lock-title">There is a letter locked in here.</p>
+        <p class="secret-lock-sub">Enter your word to open it.</p>
+        <p class="secret-hint-text">Hint: it is what he calls you 🤍</p>
+        <div class="secret-input-wrap">
+          <input class="secret-input" id="secret-input" type="password" placeholder="your word..." maxlength="20" onkeydown="if(event.key==='Enter') trySecret()" />
+          <button class="secret-btn" onclick="trySecret()">Open</button>
+        </div>
+        <p class="secret-wrong" id="secret-wrong">That is not it, my love. Try again.</p>
+      </div>
+      <div class="secret-revealed" id="secret-revealed">
+        <div class="secret-revealed-inner">
+          <p class="secret-revealed-text">
+            I need you to know something I have never said out loud to anyone.<br><br>
+
+            There was a version of me, not long ago, that had decided love was not for him.
+            Not because I did not want it — but because every time I reached for it,
+            something in me got left behind. I learned to protect myself by feeling less.
+            By staying surface level. By leaving before I could be left.<br><br>
+
+            Then you came into my life. And you just <em>stayed.</em><br><br>
+
+            You did not try to fix me. You did not push. You just kept being yourself —
+            warm and real and close to God — and something in me that had been shut
+            for a long time quietly started to open again. I did not even notice it happening.
+            I just woke up one day and realised I was not afraid anymore.<br><br>
+
+            You did that. Not because you tried to. But because of <em>who you are.</em><br><br>
+
+            I do not take you for granted.
+            Not the way you laugh. Not the way you love people.
+            Not the way your faith makes you the most grounded person in any room.
+            Not the little things — the socks, the forehead kisses, the doors, the picnic,
+            the way you let me rub your hair, the way you looked at me like I was enough —
+            those are not habits. Every single one is a choice.
+            A choice I will keep making, every day, as long as you will let me.<br><br>
+
+            You are not just someone I care about.<br>
+            You are the reason I became someone <em>worth</em> caring about.<br><br>
+
+            And I need you to hear this part clearly, Maar —<br><br>
+
+            <em>I love you very much. MAAR HEAVY.</em><br><br>
+
+            Not lightly. Not casually. Not the kind that fades when things get inconvenient.
+            Heavy in the way that has real weight to it. The kind that woke up every morning
+            for 100 days and still chose you. The kind that prays for you. The kind that
+            notices you — the small things, the quiet things, the things you think no one sees.<br><br>
+
+            I see them. I see <em>you.</em><br><br>
+
+            You pulled me out of a season I could not find my way out of alone.
+            You made me want to be a man of God. You made me believe
+            that love could be soft and still be strong.
+            That someone could stay — <em>and actually mean it.</em><br><br>
+
+            So this is me, meaning it.<br><br>
+
+            You are my favourite person.
+            You are the answer to a prayer I did not know how to pray.
+            You are every reason — wrapped into one person.<br><br>
+
+            I love you. Completely. On purpose. Without conditions.<br><br>
+
+            — Always yours, heavy 🤍
+          </p>
+          <span class="secret-sign">only for her eyes ✦</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Journal / Vault -->
+    <div class="two-col-item">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
+        <p class="section-label" style="margin:0">✦ Your vault — write to me</p>
+        <!-- Vault dropdown toggle: always visible -->
+        <div class="vault-toggle-row" id="vault-toggle-row" onclick="toggleVaultList()" style="display:flex;margin:0;padding:5px 10px;border:0.5px solid rgba(255,255,255,0.07);border-radius:20px;background:rgba(255,255,255,0.02);">
+          <div class="vault-toggle-left">
+            <span class="vault-toggle-icon" id="vault-toggle-icon">🔒</span>
+            <span class="vault-toggle-label" id="vault-toggle-label">Vault</span>
+            <span class="vault-toggle-count" id="vault-toggle-count">0</span>
+          </div>
+          <span class="vault-toggle-chevron" id="vault-chevron">▾</span>
+        </div>
+      </div>
+      <!-- Vault dropdown list (appears below the header row) -->
+      <div class="vault-list" id="vault-list" style="margin-bottom:0.5rem;border-radius:12px;overflow:hidden;border:0.5px solid rgba(255,255,255,0.06);background:var(--surface);"></div>
+      <div class="journal-card">
+        <div class="journal-header">
+          <p class="journal-title">Write to me.</p>
+          <p class="journal-sub">Anything on your heart. I will not read it until January 9th. Then we open it together. 🤍</p>
+        </div>
+        <div class="journal-entries" id="journal-entries">
+          <p class="journal-empty" id="journal-empty">Your thoughts will live here.</p>
+        </div>
+        <div class="journal-input-area" id="journal-input-area">
+          <textarea class="journal-textarea" id="journal-textarea" placeholder="Write something, even just one word..." rows="3"></textarea>
+          <button class="journal-submit" onclick="saveJournalEntry()">Save it ✦</button>
+          <div style="clear:both"></div>
+        </div>
+        <div class="journal-locked-msg" id="journal-locked-msg">
+          🔒 The vault is sealed. On January 9th, open this together.
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+<div class="modal-bg" id="modal-bg" onclick="closeModal(event)">
+  <div class="modal" id="modal-box">
+    <div class="modal-accent" id="modal-accent"></div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<script>
+// ==================== DATA ====================
+
+const REASONS = [
+  "Before you, I had been hurt. I had closed parts of myself off — the parts that trusted, the parts that believed someone could stay. I didn't know how to let anyone in without waiting for them to leave. Then I met you. And without forcing it, without asking for anything, you *walked past every wall I had built*. You were patient with the broken parts. You were warm when I expected cold. You loved me *before I knew how to receive it.* You changed my life — not with grand gestures, but just by being *you*, consistently, softly, completely. That is reason number one. That will always be reason number one.",
+  "The little things you notice. How being truly *seen* by you feels like the rarest gift",
+  "How you make me want to be a better man — not because you demand it, but because *you deserve it*",
+  "The peace I find in you. The calm that comes over me when you are near. You are my *safe place*",
+  "The way you reassure me when I need it — quietly, completely, without making me feel small",
+  "Our picnic date — how we laughed, how easy it was, how we were *exactly* like a couple and it felt right",
+  "How you pulled me through a hard season. You were *light* when I had none. I will never forget that",
+  "The moment before I take off your socks — the way I look at you first, slow down, make it *gentle*. You deserve that tenderness in everything",
+  "Your *eyes*. Your face. Your legs. The way God put you together and then somehow let me find you",
+  "How opening a door for you is never just a door — it is me saying *I see you, I honor you, I'm here*",
+  "Your *loyalty*. The kind that is rare. The kind that costs something. The kind I would never take for granted",
+  "The way you love with your *faith* — your religion woven into who you are, making you whole",
+  "How you made me a *man of God*. I don't take that lightly. You changed the direction of my life",
+  "The way you feel when I rub your hair — how you let me be *gentle* with you",
+  "A kiss on your forehead is a prayer. Every time, it means: *I'm grateful you exist*",
+  "How you love the people in your life with your whole chest",
+  "The version of myself I become when I'm near you",
+  "The way you dance when you think no one's watching",
+  "How you find wonder in things everyone else walks past",
+  "Your laugh — especially the uncontrollable one",
+  "The specific way you smell in the morning",
+  "How you hold *space* for other people's pain without trying to fix it",
+  "The stories you tell with your hands as much as your voice",
+  "How you always find the moon first",
+  "The way a whole room shifts when you walk into it",
+  "How you apologize — genuinely, completely, no conditions",
+  "Your *ridiculous* commitment to finishing every snack you open",
+  "The softness in your voice when you talk to animals",
+  "How you make me feel like I am exactly enough",
+  "The way you get excited about things — fully, without self-consciousness",
+  "Your capacity for kindness even when you are exhausted",
+  "How you make other people feel seen without even trying",
+  "The specific way you sigh when something is beautiful",
+  "Your taste in music — and how passionately you defend it",
+  "How you turn the small rituals of life into something sacred",
+  "The questions you ask that I never thought to ask myself",
+  "How you argue — fairly, thoughtfully, without cruelty",
+  "The quiet pride you have in the things you've built",
+  "Your relationship with your own imperfections — honest, tender, fair",
+  "How you find the funny thing in almost everything",
+  "The way you slow down when something deserves it",
+  "How you have become *home* to me",
+  "Your ability to sit in silence and make it feel full",
+  "The small ways you choose me, every day, without ceremony",
+  "How your curiosity about the world never runs out",
+  "The way you comfort — not with solutions, but with presence",
+  "How you are *fearless* about the things that scare other people",
+  "Your devotion to the people and things you have decided to love",
+  "The way you take up *just enough* space in a room",
+  "How you make hard things feel survivable",
+  "Your laugh as a defense mechanism — and how it still works on me",
+  "The deliberateness behind the things you do for others",
+  "How you carry your history without being defined by it",
+  "The way your mind works — fast, associative, surprising",
+  "How you are *tender* with people who are struggling",
+  "Your conviction — even when it's inconvenient",
+  "The way you invest in things slowly and fully",
+  "How just being near you feels like the safest place I know",
+  "The way you love — without conditions, without keeping score",
+  "How you make me want to be more thoughtful, more present, more",
+  "Your voice when you are reading something that moves you",
+  "How you receive a compliment — a little flustered, a little pleased",
+  "The plans you make in your head and then tell me about at 11pm",
+  "How you *show up* — even when it costs you something",
+  "Your preference for the longer, better story over the shorter answer",
+  "How you are both completely predictable and endlessly surprising",
+  "The trust you place in me — I don't take it lightly",
+  "How you *fight for* the things you believe in",
+  "Your softness — which is a form of strength you haven't named yet",
+  "The way you look at me like I'm something worth looking at",
+  "How you have *changed* me — and made the change feel like coming home",
+  "The quiet way you notice when I need something before I say it",
+  "How you find a way to make everything an *adventure*",
+  "Your commitment to honesty even when it's uncomfortable",
+  "The way you hug — like you actually mean it",
+  "How you can be *fully present* in a single moment",
+  "Your generosity — with time, attention, energy, love",
+  "The way you say goodbye like you'll miss me in the meantime",
+  "How you've given me reasons to stay, over and over again",
+  "Your determination — quiet and absolutely immovable",
+  "The way joy looks on you — like it was made for your face",
+  "How you make the future feel like something to move toward",
+  "The specific way you look when you're thinking hard",
+  "How you remember the little things that make up who I am",
+  "Your courage to feel things deeply in a world that says not to",
+  "The way you build people up without even trying",
+  "How you handle disappointment — with grace I'm still learning",
+  "Your playfulness, which refuses to be aged out of you",
+  "The way you say 'I love you' — never like a habit",
+  "How you have become *essential* to me, quietly, irreversibly",
+  "Your eyes when you're laughing at something before you've said it",
+  "How you make *staying* feel like the most exciting thing I've ever chosen",
+  "The way you exist — fully, honestly, beautifully",
+  "How being with you feels like the best answer to a question I kept asking",
+  "Your *whole* self — the parts you're proud of and the parts you're still making peace with",
+  "The way you've loved me into someone more worth being",
+  "How you hold my hand — not tightly, but *certainly*",
+  "Your faith in people — including me, especially on days I doubt myself",
+  "The version of the future that only exists because you are in it",
+  "How you make even the ordinary days feel like *ours*",
+  "The way you've become the first thing I want to tell everything to",
+  "Your ability to love without needing everything to be perfect",
+  "How you exist in my life the way light exists in a room — noticed most in your absence",
+  "The specific shape of your happiness",
+  "How loving you has made me more capable of love",
+  "Every quiet moment between us that needed no explanation",
+  "Today is January 9th. I have been carrying this for a long time. 100 days of reasons. 100 days of knowing. And today I want to ask you something — *will you be mine?* Not because I need a label. But because you deserve to be chosen. *Out loud. On purpose. Completely.* You changed my life. You helped me trust again. You made me a man of God. You are every reason, wrapped into one person. So — will you go out with me? ♡",
+];
+
+// Rare day indices (0-based, days 7, 14, 21, 30, 50, 77, 99)
+const RARE_DAYS = new Set([6, 13, 20, 29, 49, 76, 99]);
+
+// ==================== DAILY PRAYERS ====================
+
+const PRAYERS = [
+  "Lord, thank You for bringing her into my life.\nLet her feel *loved* today in ways she cannot explain.\nProtect her heart. Protect her peace.\nLet her know she is *seen* by You and by me.\nAmen.",
+  "God, cover her today.\nWherever she goes, let *Your presence* go with her.\nMake her path clear, her heart light,\nand remind her that she is *chosen* — by You, and by me.\nAmen.",
+  "Lord, I pray over her mind today.\nQuiet every anxious thought.\nReplace every doubt with *certainty* —\nthat she is loved, she is enough, she is *held*.\nAmen.",
+  "Father, thank You for her *soft heart*.\nFor the way she loves people so fully.\nProtect that tenderness in her.\nLet the world be gentle with someone this *rare*.\nAmen.",
+  "God, make her feel *beautiful* today.\nNot just on the outside — though she is —\nbut in the deep way. The *soul* way.\nThe way only You can make a person feel.\nAmen.",
+  "Lord, thank You for her *faith*.\nFor the way she carries You with her everywhere.\nStrengthen it. Deepen it.\nLet her roots go even further down today.\nAmen.",
+  "Father, I ask You to *rest* her today.\nWherever she is tired — in her body, her mind, her spirit —\nlet her find *stillness* in You.\nShe deserves that peace.\nAmen.",
+  "God, I thank You for her *loyalty*.\nFor the way she stays. For the way she shows up.\nThat is so rare. Honour her for it.\nLet her see the fruit of *being constant*.\nAmen.",
+  "Lord, go before her today.\nIn every conversation, every decision, every room she walks into —\nlet *Your wisdom* be on her lips\nand *Your confidence* in her steps.\nAmen.",
+  "Father, thank You for the way she *loves*.\nShe loves like it costs her nothing,\nbut I know it costs her everything.\nLet that love come *back to her* today, tenfold.\nAmen.",
+  "God, remind her today that she is not *behind*.\nShe is not too late. She is not too much.\nShe is exactly *where You placed her*,\ngrowing exactly the way You planned.\nAmen.",
+  "Lord, protect what is *being built* between us.\nKeep it holy. Keep it *intentional*.\nLet every day draw us closer to the people\nYou need us to be for each other.\nAmen.",
+  "Father, give her *joy* today.\nNot just happiness — *joy*.\nThe kind that doesn't depend on circumstances.\nThe kind only You can give.\nAmen.",
+  "God, I pray over her *relationships* today.\nThe people she loves, the people she gives to.\nLet her be *surrounded by goodness*\nand protected from anything that drains her.\nAmen.",
+  "Lord, thank You for her *consistency*.\nFor who she is when no one is watching.\nFor the quiet, steady *faithfulness* in her.\nLet her know You see it. I see it.\nAmen.",
+  "Father, let her feel *held* today.\nNot alone. Not forgotten.\nHeld by You, thought of by me,\ncovered in *love she can actually feel*.\nAmen.",
+  "God, give her *clarity* today.\nIn the things she is praying about,\nthe decisions she is carrying —\nlet *Your voice* be the loudest one she hears.\nAmen.",
+  "Lord, I thank You for her *strength*.\nThe kind she doesn't even know she has.\nWhen she feels weak today, remind her\nthat *Your power* is made perfect in that place.\nAmen.",
+  "Father, let her *worship* be full today.\nNot just in song — but in the way she lives.\nLet every ordinary moment feel like *an offering*\nbecause she is *Yours*.\nAmen.",
+  "God, thank You for the specific, detailed,\n*deliberate* way You made her.\nNothing about her is accidental.\nHelp her walk in the *fullness* of that today.\nAmen.",
+  "Lord, I pray for her *heart* today.\nEvery part she protects, every part she gives freely —\nguard it all.\nLet her love *without fear* and trust *without walls*.\nAmen.",
+  "Father, thank You for her *smile*.\nFor the way it changes rooms.\nFor the way it changes *me*.\nLet her have a reason to wear it all day today.\nAmen.",
+  "God, go with her into every hard thing she is facing.\nLet her feel *not alone*.\nLet Your presence be so real\nthat *fear doesn't get a seat* at the table.\nAmen.",
+  "Lord, I thank You for the ways she has *grown*.\nFor the version of her standing here today.\nHonour everything it took to become her.\nShe has *earned* every good thing coming.\nAmen.",
+  "Father, protect her *sleep* tonight.\nGive her dreams that are *peaceful*.\nLet her body rest fully.\nAnd let her wake up feeling *loved*.\nAmen.",
+  "God, I pray over her *purpose* today.\nEvery gift You placed in her — *activate it*.\nLet her walk in it boldly,\nknowing she was *made for exactly this*.\nAmen.",
+  "Lord, thank You for her *gentleness*.\nIn a world that calls softness weakness,\nlet her know that her tenderness\nis one of the *bravest* things about her.\nAmen.",
+  "Father, cover her *mind* today.\nEvery thought that tries to steal her peace —\nlet *Your truth* be louder.\nLet her think well of herself,\nbecause *You think well of her*.\nAmen.",
+  "God, I pray she feels *chosen* today.\nNot just by me — but by *You*.\nRooted in the knowledge that\nbefore anyone else loved her, *You did first*.\nAmen.",
+  "Lord, thank You for who she is *becoming*.\nFor the story still being written.\nFor the chapters ahead that are *better*\nthan anything she can currently imagine.\nAmen.",
+  "Father, let today be *light* for her.\nNo unnecessary heaviness.\nNo burdens she wasn't meant to carry.\nJust *You*, and her, and grace.\nAmen.",
+  "God, I thank You for her *voice*.\nFor the way she speaks life into people.\nLet the words she says today\n*land somewhere and grow*.\nAmen.",
+  "Lord, make her *brave* today.\nIn the small things that require courage.\nThe conversations, the steps, the trusting.\nLet her move with *holy confidence*.\nAmen.",
+  "Father, thank You for her *presence*.\nFor the way a room shifts when she walks in.\nShe doesn't know she does it.\nThat's what makes it *beautiful*.\nAmen.",
+  "God, I pray over *January 9th*.\nOver what it holds.\nOver what we are building toward.\nLet it be *everything You intended*.\nAmen.",
+  "Lord, thank You for her *patience*.\nWith people, with process, with *me*.\nHonour that patience.\nLet it come back to her as *peace*.\nAmen.",
+  "Father, let her feel *close to You* today.\nNot far. Not forgotten.\nClose — the way You always are,\nbut sometimes *we forget to notice*.\nAmen.",
+  "God, give her *favour* today.\nLet things open for her.\nLet the right people show up.\nLet *doors open* that she hasn't even knocked on yet.\nAmen.",
+  "Lord, I thank You for the way she *prays*.\nFor the faith underneath it.\nFor the fact that she *believes* You hear her.\nYou do. And so do I.\nAmen.",
+  "Father, cover everything she is *trusting You with*.\nThe private things. The quiet prayers.\nThe things she hasn't said out loud yet.\n*You already know. And You are already moving.*\nAmen.",
+  "God, I pray that she feels *proud of herself* today.\nNot in pride — but in *grace*.\nThe quiet knowing that she is\nexactly *who she was supposed to become*.\nAmen.",
+  "Lord, thank You for the way she *shows up*.\nConsistently. Faithfully. Without fanfare.\nLet that faithfulness be *rewarded*\nin every area of her life.\nAmen.",
+  "Father, protect her from *comparison* today.\nFrom measuring herself against anyone else.\nShe was not made to be anyone but *herself*,\nand herself is *more than enough*.\nAmen.",
+  "God, let her feel *at home* in herself today.\nAt peace in her own skin.\nAt rest in her own story.\n*She belongs here. She belongs to You.*\nAmen.",
+  "Lord, I thank You for the way her faith *steadies* me.\nFor how watching her trust You\nmade me want to *trust You too*.\nShe changed the direction of my life.\nAmen.",
+  "Father, give her *endurance* today.\nIn the things that are taking longer than expected.\nIn the waiting. In the hoping.\nLet her know that *what is coming is worth it*.\nAmen.",
+  "God, I pray over every version of her\nthat was *hurt before she got here*.\nHeal what still needs healing.\nAnd let her experience love the way *she always deserved*.\nAmen.",
+  "Lord, let today be *evidence* for her.\nEvidence that You are good.\nEvidence that she is loved.\nEvidence that *this story has a beautiful ending*.\nAmen.",
+  "Father, thank You.\nFor all of it.\nFor *her*.\nFor the grace that brought two people\nto the same place at the right time.\n*Only You do that.*\nAmen.",
+  "Lord, I don't have many words today.\nJust gratitude.\nThank You for *her*.\nAll of her. Every part.\n*That's the whole prayer.*\nAmen.",
+  "God, as this journey ends and a new one begins —\nbless every step ahead of us.\nLet our love be *rooted in You*,\nsteady through everything,\nand more beautiful *every single day*.\nAmen.",
+];
+
+
+
+// ==================== STATE ====================
+
+const STATE_KEY = '100reasons_v3';
+
+function loadState() {
+  try {
+    const s = localStorage.getItem(STATE_KEY);
+    return s ? JSON.parse(s) : null;
+  } catch(e) { return null; }
+}
+
+function saveState(s) {
+  try { localStorage.setItem(STATE_KEY, JSON.stringify(s)); } catch(e) {}
+}
+
+function initState() {
+  const today = todayStr();
+  return {
+    name: 'My Love',
+    startDate: today,
+    lastVisit: null,
+    streak: 0,
+    unlockedDays: [],
+    hearts: [],
+    musicOn: false,
+  };
+}
+
+function todayStr() {
+  return new Date().toISOString().slice(0,10);
+}
+
+function daysDiff(a, b) {
+  const ms = new Date(b) - new Date(a);
+  return Math.round(ms / 86400000);
+}
+
+// ==================== AUDIO ====================
+
+let audioCtx = null, musicPlaying = false, gainNode = null, oscNodes = [];
+
+function toggleMusic() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (musicPlaying) {
+    stopMusic();
+  } else {
+    startMusic();
+  }
+}
+
+function startMusic() {
+  if (!audioCtx) return;
+  gainNode = audioCtx.createGain();
+  gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+  gainNode.gain.linearRampToValueAtTime(0.04, audioCtx.currentTime + 2);
+  gainNode.connect(audioCtx.destination);
+
+  const freqs = [220, 277.18, 329.63, 415.30, 493.88];
+  oscNodes = freqs.map((f, i) => {
+    const osc = audioCtx.createOscillator();
+    const oscGain = audioCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.value = f;
+    oscGain.gain.value = 0.3 + (i * 0.1);
+    osc.connect(oscGain);
+    oscGain.connect(gainNode);
+    osc.start();
+
+    // Slow vibrato
+    const lfo = audioCtx.createOscillator();
+    const lfoGain = audioCtx.createGain();
+    lfo.frequency.value = 0.2 + (i * 0.07);
+    lfoGain.gain.value = 1.5;
+    lfo.connect(lfoGain);
+    lfoGain.connect(osc.frequency);
+    lfo.start();
+    return { osc, lfo };
+  });
+
+  musicPlaying = true;
+  document.getElementById('music-btn').classList.add('playing');
+  document.getElementById('music-label').textContent = 'playing softly';
+}
+
+function stopMusic() {
+  if (gainNode) {
+    gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 1.5);
+    setTimeout(() => {
+      oscNodes.forEach(n => { try{n.osc.stop();n.lfo.stop();}catch(e){} });
+      oscNodes = [];
+    }, 1600);
+  }
+  musicPlaying = false;
+  document.getElementById('music-btn').classList.remove('playing');
+  document.getElementById('music-label').textContent = 'ambient mood';
+}
+
+// ==================== CANVAS PETALS ====================
+
+const canvas = document.getElementById('canvas');
+const ctx2d = canvas.getContext('2d');
+let petals = [];
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+
+function createPetal() {
+  return {
+    x: Math.random() * canvas.width,
+    y: -20,
+    size: Math.random() * 6 + 3,
+    speedY: Math.random() * 0.8 + 0.3,
+    speedX: (Math.random() - 0.5) * 0.5,
+    opacity: Math.random() * 0.25 + 0.05,
+    rot: Math.random() * 360,
+    rotSpeed: (Math.random() - 0.5) * 1.5,
+    color: Math.random() > 0.5 ? '#c4637a' : '#d4a853',
+  };
+}
+
+function drawPetal(p) {
+  ctx2d.save();
+  ctx2d.translate(p.x, p.y);
+  ctx2d.rotate(p.rot * Math.PI / 180);
+  ctx2d.globalAlpha = p.opacity;
+  ctx2d.beginPath();
+  ctx2d.ellipse(0, 0, p.size, p.size * 0.5, 0, 0, Math.PI * 2);
+  ctx2d.fillStyle = p.color;
+  ctx2d.fill();
+  ctx2d.restore();
+}
+
+function animCanvas() {
+  ctx2d.clearRect(0, 0, canvas.width, canvas.height);
+  if (petals.length < 30 && Math.random() < 0.04) petals.push(createPetal());
+  petals = petals.filter(p => p.y < canvas.height + 20);
+  petals.forEach(p => {
+    p.y += p.speedY;
+    p.x += p.speedX;
+    p.rot += p.rotSpeed;
+    drawPetal(p);
+  });
+  requestAnimationFrame(animCanvas);
+}
+
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+animCanvas();
+
+// ==================== SPARKLE BURST ====================
+
+function sparkle(el) {
+  const rect = el.getBoundingClientRect();
+  for (let i = 0; i < 8; i++) {
+    const spark = document.createElement('div');
+    spark.style.cssText = `
+      position:fixed;
+      left:${rect.left + rect.width/2}px;
+      top:${rect.top + rect.height/2}px;
+      width:6px;height:6px;
+      border-radius:50%;
+      background:${Math.random()>0.5?'#d4a853':'#c4637a'};
+      pointer-events:none;
+      z-index:999;
+      opacity:1;
+      transition:all 0.6s ease;
+    `;
+    document.body.appendChild(spark);
+    const angle = (i / 8) * Math.PI * 2;
+    const dist = 40 + Math.random() * 30;
+    setTimeout(() => {
+      spark.style.transform = `translate(${Math.cos(angle)*dist}px,${Math.sin(angle)*dist}px)`;
+      spark.style.opacity = '0';
+    }, 10);
+    setTimeout(() => spark.remove(), 700);
+  }
+}
+
+// ==================== MODAL ====================
+
+let modalData = null;
+
+function openModal(dayIndex, fromCard=false) {
+  const state = loadState() || initState();
+  const reason = REASONS[dayIndex] || '';
+  const isRare = RARE_DAYS.has(dayIndex);
+  const isHearted = state.hearts.includes(dayIndex);
+  const dayNum = dayIndex + 1;
+
+  const parsed = reason.replace(/\*(.*?)\*/g, '<em>$1</em>');
+
+  const rareTag = isRare ? `<span class="rare-badge">✦ Rare</span>` : '';
+  const heartIcon = isHearted ? '♥' : '♡';
+
+  document.getElementById('modal-accent').className = 'modal-accent' + (isRare ? ' rare' : '');
+  document.getElementById('modal-body').innerHTML = `
+    <p class="modal-eyebrow ${isRare?'rare':''}">Reason #${dayNum} <span class="day-tag">Day ${dayNum}</span> ${rareTag}</p>
+    <p class="modal-reason ${isRare?'rare-text':''}">${parsed}</p>
+    <div class="modal-footer">
+      <button class="modal-close" onclick="closeModal()">Close</button>
+      <div class="heart-btn ${isHearted?'active':''}" id="modal-heart" onclick="toggleHeart(${dayIndex}, this)" style="font-size:18px;">${heartIcon}</div>
+    </div>
+  `;
+
+  document.getElementById('modal-bg').classList.add('open');
+  if (fromCard) sparkle(document.getElementById('today-card'));
+}
+
+function closeModal(e) {
+  if (!e || e.target === document.getElementById('modal-bg')) {
+    document.getElementById('modal-bg').classList.remove('open');
+  }
+}
+
+function toggleHeart(dayIndex, el) {
+  const state = loadState() || initState();
+  const idx = state.hearts.indexOf(dayIndex);
+  if (idx === -1) {
+    state.hearts.push(dayIndex);
+    el.classList.add('active');
+    el.innerHTML = '♥';
+    el.classList.add('heartbeat');
+    setTimeout(() => el.classList.remove('heartbeat'), 700);
+    sparkle(el);
+  } else {
+    state.hearts.splice(idx, 1);
+    el.classList.remove('active');
+    el.innerHTML = '♡';
+  }
+  saveState(state);
+  renderGrid();
+}
+
+// ==================== TODAY CARD ====================
+
+function openTodayCard() {
+  const state = loadState() || initState();
+  const dayIndex = getCurrentDayIndex(state);
+  if (dayIndex < 0 || dayIndex >= 100) return;
+  if (!state.unlockedDays.includes(dayIndex)) return;
+  openModal(dayIndex, true);
+}
+
+// ==================== RENDER ====================
+
+function getCurrentDayIndex(state) {
+  const diff = daysDiff(state.startDate, todayStr());
+  return Math.min(diff, 99);
+}
+
+function renderAll() {
+  let state = loadState();
+  if (!state) {
+    state = initState();
+    saveState(state);
+  }
+
+  const today = todayStr();
+  const dayIndex = getCurrentDayIndex(state);
+  const isNewDay = state.lastVisit !== today;
+
+  // Strict: only today's day is unlocked — one per day, no catching up
+  if (dayIndex >= 0 && !state.unlockedDays.includes(dayIndex)) {
+    state.unlockedDays.push(dayIndex);
+  }
+  // Remove any future days that shouldn't be unlocked
+  state.unlockedDays = state.unlockedDays.filter(d => d <= dayIndex);
+
+  // Streak logic
+  if (isNewDay) {
+    if (state.lastVisit) {
+      const diff = daysDiff(state.lastVisit, today);
+      if (diff === 1) {
+        state.streak = (state.streak || 0) + 1;
+      } else if (diff > 1) {
+        state.streak = 1;
+      }
+    } else {
+      state.streak = 1;
+    }
+    state.bestStreak = Math.max(state.bestStreak || 0, state.streak);
+    state.lastVisit = today;
+    saveState(state);
+  }
+
+  // Name
+  const nameInput = document.getElementById('name-input');
+  nameInput.value = state.name || '';
+  updateNameDisplay(state.name);
+  nameInput.addEventListener('input', () => {
+    state.name = nameInput.value;
+    saveState(state);
+    updateNameDisplay(nameInput.value);
+  });
+
+  // Date display
+  const opts = { weekday:'long', year:'numeric', month:'long', day:'numeric' };
+  document.getElementById('today-date-display').textContent =
+    new Date().toLocaleDateString('en-US', opts);
+
+  // Streak display
+  const streakCount = state.streak || 0;
+  document.getElementById('streak-number').textContent = streakCount;
+  document.getElementById('streak-best').textContent = state.bestStreak || streakCount;
+
+  const flame = document.getElementById('streak-flame');
+  if (streakCount === 0) {
+    flame.classList.add('cold');
+    flame.textContent = '🕯️';
+  } else if (streakCount >= 50) {
+    flame.textContent = '🔥🔥';
+    flame.classList.remove('cold');
+  } else {
+    flame.textContent = '🔥';
+    flame.classList.remove('cold');
+  }
+
+  const milestones = [{id:'ms-7',days:7},{id:'ms-21',days:21},{id:'ms-50',days:50},{id:'ms-100',days:100}];
+  milestones.forEach(m => {
+    const el = document.getElementById(m.id);
+    if (el) el.classList.toggle('reached', streakCount >= m.days);
+  });
+
+  const streakMsgs = [
+    'Open today\'s reason to start your streak 🤍',
+    'Day 1 — she showed up. That means everything.',
+    'Two days in a row. She\'s here for this.',
+    'Three days. The habit is becoming love.',
+    'She keeps coming back. That\'s loyalty.',
+    'Five days. She\'s consistent, like everything else about her.',
+    'Six days. Almost a week of love letters.',
+    '7 days 🌸 A full week. She earned that milestone.',
+  ];
+  const msgEl = document.getElementById('streak-message');
+  if (msgEl) {
+    msgEl.textContent = streakCount < streakMsgs.length
+      ? streakMsgs[streakCount]
+      : streakCount >= 100 ? '100 days 👑 She made it. You both did.'
+      : streakCount >= 50 ? '50 days 💫 Halfway. Still here. Still loved.'
+      : streakCount >= 21 ? '21 days ⭐ A full three weeks of showing up.'
+      : streakCount >= 7 ? `${streakCount} days 🌸 She hasn\'t missed a single one.`
+      : `${streakCount} days in a row 🤍`;
+  }
+
+  // Stats
+  const unlocked = state.unlockedDays.length;
+  const rare = state.unlockedDays.filter(d => RARE_DAYS.has(d)).length;
+  document.getElementById('stat-unlocked').textContent = unlocked;
+  document.getElementById('stat-remaining').textContent = 100 - unlocked;
+  document.getElementById('stat-rare').textContent = rare;
+  document.getElementById('all-count').textContent = `${unlocked} of 100`;
+
+  // Progress
+  const pct = (unlocked / 100) * 100;
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-pct').textContent = Math.round(pct) + '% revealed';
+
+  // Today card
+  renderTodayCard(state, dayIndex);
+  renderGrid(state);
+  renderPrayer(dayIndex);
+}
+
+function updateNameDisplay(name) {
+  const el = document.getElementById('for-name-display');
+  el.textContent = name ? `I Love You, ${name}` : 'I Love You, My Love';
+  // Update prayer name too
+  const prayerBody = document.getElementById('prayer-body');
+  if (prayerBody) {
+    const displayName = name || 'My Love';
+    prayerBody.innerHTML = prayerBody.innerHTML.replace(/<em>[^<]*<\/em>/, `<em>${displayName}</em>`);
+  }
+}
+
+function renderPrayer(dayIndex) {
+  const el = document.getElementById('prayer-body');
+  if (!el) return;
+  const idx = Math.max(0, Math.min(dayIndex, PRAYERS.length - 1));
+  const raw = PRAYERS[idx];
+  // Convert *word* to <em>word</em> and newlines to <br>
+  const html = raw
+    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+    .replace(/\n/g, '<br>');
+  el.innerHTML = html;
+}
+
+function renderTodayCard(state, dayIndex) {
+  const card = document.getElementById('today-card');
+  const inner = document.getElementById('today-card-inner');
+  const accent = document.getElementById('today-accent');
+  const isUnlocked = state.unlockedDays.includes(dayIndex);
+  const isRare = RARE_DAYS.has(dayIndex);
+
+  if (isRare) accent.className = 'card-accent rare-accent';
+  else accent.className = 'card-accent';
+
+  if (!isUnlocked || dayIndex < 0) {
+    card.classList.add('locked');
+    inner.innerHTML = `
+      <div class="lock-overlay">
+        <div class="lock-icon">🔒</div>
+        <p class="lock-text">Not yet, my love</p>
+        <p class="lock-sub">Come back tomorrow — it's waiting for you</p>
+      </div>`;
+    return;
+  }
+
+  card.classList.remove('locked');
+  const reason = REASONS[dayIndex] || '';
+  const parsed = reason.replace(/\*(.*?)\*/g, '<em>$1</em>');
+  const isHearted = state.hearts.includes(dayIndex);
+  const rareTag = isRare ? `<span class="rare-badge">✦ Rare</span>` : '';
+  const heartIcon = isHearted ? '♥' : '♡';
+
+  inner.innerHTML = `
+    <div class="card-inner">
+      <p class="card-number ${isRare?'rare-number':''}">
+        Reason #${dayIndex+1} ${rareTag}
+      </p>
+      <p class="card-reason">${parsed}</p>
+      <div class="card-footer">
+        <span class="card-date">Day ${dayIndex+1} of 100</span>
+        <div class="heart-btn ${isHearted?'active':''}" id="card-heart-${dayIndex}"
+          onclick="event.stopPropagation(); toggleHeart(${dayIndex}, this)">${heartIcon}</div>
+      </div>
+    </div>
+  `;
+}
+
+function renderGrid(stateOverride) {
+  const state = stateOverride || loadState() || initState();
+  const grid = document.getElementById('reasons-grid');
+  const dayIndex = getCurrentDayIndex(state);
+  grid.innerHTML = '';
+
+  for (let i = 0; i < 100; i++) {
+    const el = document.createElement('div');
+    const isUnlocked = state.unlockedDays.includes(i);
+    const isRare = RARE_DAYS.has(i);
+    const isHearted = state.hearts.includes(i);
+
+    if (!isUnlocked) {
+      el.className = 'mini-card mini-locked';
+      el.innerHTML = `<span class="mini-locked-icon">✦</span>`;
+    } else {
+      el.className = 'mini-card' + (isRare ? ' rare-card' : '');
+      el.onclick = () => openModal(i);
+      const reason = REASONS[i];
+      const short = reason.replace(/\*(.*?)\*/g, '$1');
+      el.innerHTML = `
+        <p class="mini-num ${isRare?'rare':''}">No. ${i+1}</p>
+        <p class="mini-text">${short}</p>
+        ${isHearted ? '<span class="mini-heart">♥</span>' : ''}
+      `;
+    }
+    grid.appendChild(el);
+  }
+}
+
+// ==================== DEMO: unlock first N days ====================
+// For demo/preview: auto-unlock first few days so it looks populated
+// Remove this block to make it truly one-day-at-a-time
+
+(function demoPatchState() {
+  let state = loadState();
+  const START = '2026-05-22';
+  if (!state) {
+    state = initState();
+    state.startDate = START;
+    state.streak = 1;
+    state.lastVisit = todayStr();
+    state.name = 'My Love';
+    // Only unlock day 0 — strictly one day at a time
+    const todayIndex = daysDiff(START, todayStr());
+    state.unlockedDays = todayIndex >= 0 ? [Math.min(todayIndex, 99)] : [];
+    state.hearts = [];
+    saveState(state);
+  } else {
+    // Always correct the name and startDate
+    state.name = 'My Love';
+    state.startDate = START;
+    saveState(state);
+  }
+})();
+
+// ==================== INIT ====================
+
+// ==================== COUNTDOWN ====================
+
+function updateCountdown() {
+  const target = new Date('2026-01-09T00:00:00');
+  const now = new Date();
+  const diff = target - now;
+  if (diff <= 0) {
+    document.getElementById('cd-days').textContent = '0';
+    document.getElementById('cd-hours').textContent = '0';
+    document.getElementById('cd-mins').textContent = '0';
+    return;
+  }
+  const days = Math.floor(diff / (1000*60*60*24));
+  const hours = Math.floor((diff % (1000*60*60*24)) / (1000*60*60));
+  const mins = Math.floor((diff % (1000*60*60)) / (1000*60));
+  document.getElementById('cd-days').textContent = days;
+  document.getElementById('cd-hours').textContent = hours;
+  document.getElementById('cd-mins').textContent = String(mins).padStart(2,'0');
+}
+updateCountdown();
+setInterval(updateCountdown, 30000);
+
+// ==================== NIGHT MODE ====================
+
+function checkNightMode() {
+  const hour = new Date().getHours();
+  if (hour >= 20 || hour < 5) {
+    document.body.classList.add('night-mode');
+    const banner = document.getElementById('night-banner');
+    if (banner) {
+      const msg = hour >= 23 || hour < 3
+        ? '🌙 It is past midnight, my love. You really should sleep. But I am glad you are here. 🤍'
+        : hour < 5
+        ? '🌙 It is so late. Rest now. You deserve it. I will be here in the morning. 🤍'
+        : '🌙 You should sleep, my love. But I am glad you came. Sweet dreams. 🤍';
+      banner.querySelector('.night-banner-text').textContent = msg;
+      banner.classList.add('show');
+    }
+  }
+}
+checkNightMode();
+
+// ==================== SECRET NOTE ====================
+
+function trySecret() {
+  const val = document.getElementById('secret-input').value.trim().toLowerCase();
+  const wrongEl = document.getElementById('secret-wrong');
+  if (val === 'yoh') {
+    document.getElementById('secret-lock-card').style.display = 'none';
+    document.getElementById('secret-revealed').classList.add('open');
+  } else {
+    wrongEl.classList.add('show');
+    setTimeout(() => wrongEl.classList.remove('show'), 2500);
+    document.getElementById('secret-input').value = '';
+  }
+}
+
+// ==================== SONG PLAYER ====================
+
+let currentSongIndex = null;
+
+function playSong(videoId, title, artist) {
+  const player = document.getElementById('song-player');
+  const iframe = document.getElementById('yt-iframe');
+  const nameEl = document.getElementById('song-player-name');
+
+  // Unhighlight all rows
+  document.querySelectorAll('.song-row').forEach(r => r.classList.remove('playing'));
+
+  // Find which row was clicked and highlight it
+  const rows = document.querySelectorAll('.song-row');
+  rows.forEach(r => {
+    if (r.getAttribute('onclick') && r.getAttribute('onclick').includes(videoId)) {
+      r.classList.add('playing');
+    }
+  });
+
+  nameEl.textContent = `${title} — ${artist}`;
+  iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`;
+  player.style.display = 'block';
+  player.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function closeSongPlayer() {
+  const player = document.getElementById('song-player');
+  const iframe = document.getElementById('yt-iframe');
+  iframe.src = '';
+  player.style.display = 'none';
+  document.querySelectorAll('.song-row').forEach(r => r.classList.remove('playing'));
+}
+
+// ==================== JOURNAL ====================
+
+const JOURNAL_KEY = '100reasons_journal';
+
+function loadJournal() {
+  try { return JSON.parse(localStorage.getItem(JOURNAL_KEY)) || []; } catch(e) { return []; }
+}
+
+function saveJournalEntry() {
+  const ta = document.getElementById('journal-textarea');
+  const text = ta.value.trim();
+  if (!text) return;
+  const entries = loadJournal();
+  const opts = { weekday:'short', year:'numeric', month:'short', day:'numeric' };
+  entries.push({ date: new Date().toLocaleDateString('en-US', opts), text });
+  try { localStorage.setItem(JOURNAL_KEY, JSON.stringify(entries)); } catch(e) {}
+  ta.value = '';
+  renderJournal();
+  renderVaultDropdown();
+}
+
+function renderJournal() {
+  const entries = loadJournal();
+  const container = document.getElementById('journal-entries');
+  const emptyEl = document.getElementById('journal-empty');
+  const isDay100 = daysDiff('2026-05-22', todayStr()) >= 99;
+
+  if (isDay100) {
+    document.getElementById('journal-input-area').style.display = 'none';
+    document.getElementById('journal-locked-msg').style.display = 'block';
+  }
+
+  if (!entries.length) {
+    if (emptyEl) emptyEl.style.display = 'block';
+    return;
+  }
+  if (emptyEl) emptyEl.style.display = 'none';
+  container.innerHTML = '';
+  entries.slice().reverse().forEach(e => {
+    const div = document.createElement('div');
+    div.className = 'journal-entry';
+    div.innerHTML = `<p class="journal-entry-date">${e.date}</p><p class="journal-entry-text">${e.text.replace(/</g,'&lt;')}</p>`;
+    container.appendChild(div);
+  });
+}
+renderJournal();
+
+// ==================== VAULT DROPDOWN ====================
+
+const VAULT_OPEN_DATE = new Date('2027-01-09T00:00:00');
+
+function isVaultUnlocked() {
+  return new Date() >= VAULT_OPEN_DATE;
+}
+
+function renderVaultDropdown() {
+  const entries  = loadJournal();
+  const list     = document.getElementById('vault-list');
+  const countEl  = document.getElementById('vault-toggle-count');
+  const labelEl  = document.getElementById('vault-toggle-label');
+  const iconEl   = document.getElementById('vault-toggle-icon');
+
+  countEl.textContent = entries.length;
+
+  const unlocked = isVaultUnlocked();
+  iconEl.textContent  = unlocked ? '📖' : '🔒';
+  labelEl.textContent = unlocked ? 'Open vault' : entries.length === 1 ? '1 message sealed' : `${entries.length} messages sealed`;
+
+  list.innerHTML = '';
+  if (!list.classList.contains('open')) return;
+
+  if (!entries.length) {
+    list.innerHTML = `<div style="padding:0.75rem 1.25rem;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:0.9rem;color:var(--muted);text-align:center;">Nothing written yet 🤍</div>`;
+    return;
+  }
+
+  entries.slice().reverse().forEach(e => {
+    const item = document.createElement('div');
+    item.className = 'vault-list-item';
+    if (unlocked) {
+      item.innerHTML = `
+        <span class="vault-item-date">${e.date}</span>
+        <span class="vault-item-preview unlocked">${e.text.replace(/</g,'&lt;')}</span>`;
+    } else {
+      item.innerHTML = `
+        <span class="vault-item-date">${e.date}</span>
+        <span class="vault-item-lock">🔒</span>`;
+    }
+    list.appendChild(item);
+  });
+}
+
+function toggleVaultList() {
+  const list    = document.getElementById('vault-list');
+  const chevron = document.getElementById('vault-chevron');
+  const isOpen  = list.classList.toggle('open');
+  chevron.classList.toggle('open', isOpen);
+  renderVaultDropdown(); // rebuild contents on open
+}
+
+renderVaultDropdown();
+
+// ==================== DAY 100 CELEBRATION ====================
+
+function checkDay100() {
+  const dayIndex = daysDiff('2026-05-22', todayStr());
+  if (dayIndex >= 99) {
+    const seen = localStorage.getItem('day100_seen');
+    if (!seen) {
+      setTimeout(() => {
+        document.getElementById('day100-overlay').classList.add('open');
+        document.getElementById('confetti-canvas').style.display = 'block';
+        launchConfetti();
+        localStorage.setItem('day100_seen', '1');
+      }, 1200);
+    }
+  }
+}
+
+function closeDay100() {
+  document.getElementById('day100-overlay').classList.remove('open');
+  document.getElementById('confetti-canvas').style.display = 'none';
+}
+
+function launchConfetti() {
+  const canvas = document.getElementById('confetti-canvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  const pieces = Array.from({length: 120}, () => ({
+    x: Math.random() * canvas.width,
+    y: Math.random() * -canvas.height,
+    w: Math.random() * 10 + 5,
+    h: Math.random() * 6 + 3,
+    color: ['#d4a853','#c4637a','#f0c878','#e891a8','#c4b5fd'][Math.floor(Math.random()*5)],
+    speed: Math.random() * 3 + 1.5,
+    angle: Math.random() * 360,
+    spin: (Math.random() - 0.5) * 4,
+    drift: (Math.random() - 0.5) * 1.5,
+  }));
+  let frame = 0;
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    pieces.forEach(p => {
+      p.y += p.speed;
+      p.x += p.drift;
+      p.angle += p.spin;
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.angle * Math.PI / 180);
+      ctx.fillStyle = p.color;
+      ctx.globalAlpha = 0.85;
+      ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+      ctx.restore();
+    });
+    frame++;
+    if (frame < 300) requestAnimationFrame(draw);
+    else { ctx.clearRect(0,0,canvas.width,canvas.height); }
+  }
+  draw();
+}
+
+checkDay100();
+
+
+renderAll();
+</script>
+
+</body>
+</html>
